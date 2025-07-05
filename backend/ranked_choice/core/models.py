@@ -12,6 +12,9 @@ class Ballot(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        db_table = 'ballot'
+
     def __str__(self):
         return self.title
 
@@ -32,6 +35,9 @@ class Choice(models.Model):
     description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'choice'
 
     def __str__(self):
         return self.name
