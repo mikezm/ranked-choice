@@ -1,0 +1,9 @@
+from django.urls import path
+from . import views
+
+app_name = 'api'
+
+urlpatterns = [
+    # Add API endpoints here
+    path('health/', views.health_check, name='health_check'),
+]
