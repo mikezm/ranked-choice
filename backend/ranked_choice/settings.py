@@ -32,8 +32,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     # Local apps
-    'ranked_choice.core',
-    'ranked_choice.api',
+    'ranked_choice.core.apps.CoreConfig',
+    'ranked_choice.api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
@@ -70,16 +70,33 @@ WSGI_APPLICATION = 'ranked_choice.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'ranked_choice'),
-        'USER': os.getenv('DB_USER', 'postgres'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'postgres'),
-        'HOST': os.getenv('DB_HOST', 'db'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+# Check if running in test mode
+import sys
+TESTING = 'pytest' in sys.modules or 'test' in sys.argv
+
+if TESTING:
+    # Use SQLite in-memory database for tests
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+            'TEST': {
+                'NAME': ':memory:',
+            },
+        }
     }
-}
+else:
+    # Use PostgreSQL for normal operation
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('DB_NAME', 'ranked_choice'),
+            'USER': os.getenv('DB_USER', 'postgres'),
+            'PASSWORD': os.getenv('DB_PASSWORD', 'postgres'),
+            'HOST': os.getenv('DB_HOST', 'db'),
+            'PORT': os.getenv('DB_PORT', '5432'),
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

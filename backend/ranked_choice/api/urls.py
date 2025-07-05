@@ -6,4 +6,5 @@ app_name = 'api'
 urlpatterns = [
     # Add API endpoints here
     path('health/', views.health_check, name='health_check'),
+    path('ballots/', views.create_ballot, name='create_ballot'),
 ]

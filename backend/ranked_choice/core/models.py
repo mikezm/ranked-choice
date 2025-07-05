@@ -13,6 +13,7 @@ class Ballot(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        app_label = 'core'
         db_table = 'ballot'
 
     def __str__(self):
@@ -37,6 +38,7 @@ class Choice(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        app_label = 'core'
         db_table = 'choice'
 
     def __str__(self):
