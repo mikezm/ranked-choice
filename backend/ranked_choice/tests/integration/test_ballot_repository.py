@@ -14,8 +14,6 @@ class TestDjangoBallotRepository(IntegrationTestCase):
         Set up each test.
         """
         self.repository = BallotRepository()
-        # No manual data clearing is needed; Django's TestCase wraps each
-        # test in a transaction and rolls it back afterward.
 
     def test_create_ballot_with_title_only(self):
         """

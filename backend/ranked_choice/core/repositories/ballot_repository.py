@@ -86,10 +86,7 @@ class BallotRepository(BallotRepositoryInterface):
         ballot_items = []
 
         for ballot in ballots:
-            # Get all choices for this ballot
             choice_items = build_choices(ballot)
-
-            # Create and append the BallotItem
             ballot_items.append(BallotItem(
                 title=ballot.title,
                 slug=ballot.slug,

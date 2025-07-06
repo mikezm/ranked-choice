@@ -15,7 +15,7 @@ class Ballot(models.Model):
 
     class Meta:
         app_label = 'core'
-        db_table = 'ballot'
+        db_table = 'ballots'
 
     def __str__(self):
         return self.title
@@ -40,7 +40,7 @@ class Choice(models.Model):
 
     class Meta:
         app_label = 'core'
-        db_table = 'choice'
+        db_table = 'choices'
 
     def __str__(self):
         return self.name
