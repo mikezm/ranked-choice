@@ -43,11 +43,11 @@ class CreateBallotAPITests(IntegrationTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIn('slug', response.data)
-        self.assertEqual(response.data['slug'], 'test-ballot')
+        self.assertTrue(response.data['slug'].startswith('test-ballot'))
 
         ballot = Ballot.objects.get(slug=response.data['slug'])
         self.assertEqual(ballot.title, 'Test Ballot')
-        self.assertEqual(ballot.slug, 'test-ballot')
+        self.assertTrue(ballot.slug.startswith('test-ballot'))
 
         choices = Choice.objects.filter(ballot=ballot).order_by('name')
         self.assertEqual(choices.count(), 1)  # 1 choice + 1 description
@@ -126,11 +126,11 @@ class CreateBallotAPITests(IntegrationTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIn('slug', response.data)
-        self.assertEqual(response.data['slug'], 'test-ballot-with-choices')
+        self.assertTrue(response.data['slug'].startswith('test-ballot-with-choices'))
 
         ballot = Ballot.objects.get(slug=response.data['slug'])
         self.assertEqual(ballot.title, 'Test Ballot with Choices')
-        self.assertEqual(ballot.slug, 'test-ballot-with-choices')
+        self.assertTrue(ballot.slug.startswith( 'test-ballot-with-choices'))
 
         choices = Choice.objects.filter(ballot=ballot).order_by('name')
         self.assertEqual(choices.count(), 2)

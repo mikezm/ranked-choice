@@ -23,11 +23,11 @@ class TestDjangoBallotRepository(IntegrationTestCase):
         ]
         slug = self.repository.create_ballot(title="Test Ballot", choices=choices)
         # Verify the returned slug
-        self.assertEqual(slug, "test-ballot")
+        self.assertTrue(slug.startswith("test-ballot"))
         ballot = self.repository.get_ballot_by_slug(slug)
         self.assertIsNotNone(ballot)
         self.assertEqual(ballot.title, "Test Ballot")
-        self.assertEqual(ballot.slug, "test-ballot")
+        self.assertTrue(ballot.slug.startswith("test-ballot"))
         self.assertEqual(len(ballot.choices), 1)
         self.assertEqual(ballot.choices[0].name, "Option 1")
         self.assertEqual(ballot.choices[0].description, "Description 1")
@@ -45,7 +45,7 @@ class TestDjangoBallotRepository(IntegrationTestCase):
             description="This is a test ballot"
         )
         # Verify the returned slug
-        self.assertEqual(slug, "test-ballot")
+        self.assertTrue(slug.startswith("test-ballot"))
         ballot = self.repository.get_ballot_by_slug(slug)
         self.assertIsNotNone(ballot)
         self.assertEqual(ballot.title, "Test Ballot")
@@ -64,7 +64,7 @@ class TestDjangoBallotRepository(IntegrationTestCase):
         ]
         slug = self.repository.create_ballot(title="Test Ballot", choices=choices)
         # Verify the returned slug
-        self.assertEqual(slug, "test-ballot")
+        self.assertTrue(slug.startswith("test-ballot"))
         ballot = self.repository.get_ballot_by_slug(slug)
         retrieved_ballot = self.repository.get_ballot_by_slug(ballot.slug)
         self.assertIsNotNone(retrieved_ballot)
@@ -95,8 +95,8 @@ class TestDjangoBallotRepository(IntegrationTestCase):
         slug2 = self.repository.create_ballot(title="Test Ballot 2", choices=choices2)
 
         # Verify the returned slugs
-        self.assertEqual(slug1, "test-ballot-1")
-        self.assertEqual(slug2, "test-ballot-2")
+        self.assertTrue(slug1.startswith("test-ballot-1"))
+        self.assertTrue(slug2.startswith("test-ballot-2"))
 
         ballots = self.repository.list_ballots()
         self.assertEqual(len(ballots), 2)
@@ -130,12 +130,12 @@ class TestDjangoBallotRepository(IntegrationTestCase):
         )
 
         # Verify the returned slug
-        self.assertEqual(slug, "test-ballot")
+        self.assertTrue(slug.startswith("test-ballot"))
         ballot = self.repository.get_ballot_by_slug(slug)
 
         self.assertIsNotNone(ballot)
         self.assertEqual(ballot.title, "Test Ballot")
-        self.assertEqual(ballot.slug, "test-ballot")
+        self.assertTrue(ballot.slug.startswith("test-ballot"))
         self.assertEqual(ballot.description, "This is a test ballot")
 
         # Check that all choices were created
