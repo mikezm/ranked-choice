@@ -88,10 +88,14 @@ describe('BallotForm Component', () => {
     render(<BallotForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
 
     fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Test Ballot' } });
-      fireEvent.change(screen.getByLabelText('Description (optional)'), { target: { value: 'Test Description' } });
-      fireEvent.change(screen.getByLabelText('Choice 1 Name'), { target: { value: 'Option 1' } });
-      fireEvent.change(screen.getByLabelText('Choice 1 Description (optional)'), { target: { value: 'First option' } });
-      fireEvent.change(screen.getByLabelText('Choice 2 Name'), { target: { value: 'Option 2' } });
+    fireEvent.change(screen.getByLabelText('Description (optional)'), {
+      target: { value: 'Test Description' },
+    });
+    fireEvent.change(screen.getByLabelText('Choice 1 Name'), { target: { value: 'Option 1' } });
+    fireEvent.change(screen.getByLabelText('Choice 1 Description (optional)'), {
+      target: { value: 'First option' },
+    });
+    fireEvent.change(screen.getByLabelText('Choice 2 Name'), { target: { value: 'Option 2' } });
 
     // Setup mock to simulate successful submission
     mockMutate.mockImplementation((data, options) => {
@@ -108,8 +112,8 @@ describe('BallotForm Component', () => {
           description: 'Test Description',
           choices: [
             { name: 'Option 1', description: 'First option' },
-            { name: 'Option 2', description: '' }
-          ]
+            { name: 'Option 2', description: '' },
+          ],
         },
         expect.any(Object)
       );

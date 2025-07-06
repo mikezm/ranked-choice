@@ -117,10 +117,10 @@ describe('useBallotQueries', () => {
       // Execute the mutation
       await act(async () => {
         result.current.mutate(mockBallotData, {
-          onSuccess: (data) => {
+          onSuccess: data => {
             // This callback will be called when the mutation succeeds
             expect(data).toBe('new-slug');
-          }
+          },
         });
       });
 
@@ -140,9 +140,7 @@ describe('useBallotQueries', () => {
       const mockBallotData = {
         title: 'New Ballot',
         description: 'New Description',
-        choices: [
-          { name: 'Option 1', description: 'First option' },
-        ],
+        choices: [{ name: 'Option 1', description: 'First option' }],
       };
 
       const mockError = new Error('API Error');
@@ -155,10 +153,10 @@ describe('useBallotQueries', () => {
       // Execute the mutation
       await act(async () => {
         result.current.mutate(mockBallotData, {
-          onError: (error) => {
+          onError: error => {
             // This callback will be called when the mutation fails
             expect(error).toBeTruthy();
-          }
+          },
         });
       });
 

@@ -51,7 +51,9 @@ describe('BallotDetail Component', () => {
     );
 
     expect(screen.getByText('Error')).toBeInTheDocument();
-    expect(screen.getByText('Failed to load ballot. It may not exist or there was a server error.')).toBeInTheDocument();
+    expect(
+      screen.getByText('Failed to load ballot. It may not exist or there was a server error.')
+    ).toBeInTheDocument();
     expect(screen.getByText('Return to Home')).toBeInTheDocument();
   });
 
@@ -72,7 +74,7 @@ describe('BallotDetail Component', () => {
     );
 
     expect(screen.getByText('Ballot Not Found')).toBeInTheDocument();
-    expect(screen.getByText('The ballot you\'re looking for doesn\'t exist.')).toBeInTheDocument();
+    expect(screen.getByText("The ballot you're looking for doesn't exist.")).toBeInTheDocument();
   });
 
   test('renders ballot details when data is available', () => {

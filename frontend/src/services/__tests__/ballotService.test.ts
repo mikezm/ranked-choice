@@ -42,9 +42,7 @@ describe('ballotService', () => {
       const mockBallotData = {
         title: 'Test Ballot',
         description: 'Test Description',
-        choices: [
-          { name: 'Option 1', description: 'First option' },
-        ],
+        choices: [{ name: 'Option 1', description: 'First option' }],
       };
 
       const mockError = new Error('API Error');
@@ -88,7 +86,7 @@ describe('ballotService', () => {
     test('throws an error when API call fails', async () => {
       const mockSlug = 'test-slug';
       const mockError = new Error('API Error');
-      
+
       mockAxios.get.mockRejectedValue(mockError);
 
       await expect(getBallot(mockSlug)).rejects.toThrow(mockError);
