@@ -9,10 +9,237 @@
   margin-top: 50px;
 }
 
-.api-status {
-  margin-top: 30px;
+/* Welcome section */
+.welcome-section {
+  margin: 30px auto;
+  max-width: 600px;
+}
+
+.create-ballot-btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+}
+
+.create-ballot-btn:hover {
+  background-color: #45a049;
+}
+
+/* Ballot Form */
+.ballot-form {
+  margin: 30px auto;
+  max-width: 800px;
+  text-align: left;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.form-group textarea {
+  min-height: 100px;
+}
+
+.error {
+  color: #d32f2f;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #d32f2f;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.choice-container {
+  border: 1px solid #ddd;
+  border-radius: 4px;
   padding: 15px;
-  border-radius: 5px;
+  margin-bottom: 15px;
+  background-color: #f9f9f9;
+}
+
+.add-choice-btn {
+  background-color: #2196F3;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.add-choice-btn:hover {
+  background-color: #0b7dda;
+}
+
+.remove-choice-btn {
+  background-color: #f44336;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.remove-choice-btn:hover {
+  background-color: #d32f2f;
+}
+
+.form-actions {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-actions button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.form-actions button[type="button"] {
   background-color: #f5f5f5;
+  color: #333;
+}
+
+.form-actions button[type="submit"] {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.form-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Ballot Created */
+.ballot-created {
+  margin: 30px auto;
+  max-width: 600px;
+}
+
+.ballot-link {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  word-break: break-all;
+}
+
+.ballot-link a {
+  color: #2196F3;
+  text-decoration: none;
+}
+
+.ballot-link a:hover {
+  text-decoration: underline;
+}
+
+.create-another-btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+}
+
+.create-another-btn:hover {
+  background-color: #45a049;
+}
+
+/* Ballot Detail */
+.ballot-detail {
+  margin: 30px auto;
+  max-width: 800px;
+  text-align: left;
+}
+
+.ballot-description {
+  margin-bottom: 30px;
+  font-size: 18px;
+  color: #666;
+}
+
+.choices-list {
+  margin-top: 20px;
+}
+
+.choice-item {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: #f9f9f9;
+}
+
+.choice-item h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.back-link {
   display: inline-block;
+  margin-top: 30px;
+  color: #2196F3;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+/* Loading and Error States */
+.loading, .error-container, .not-found {
+  margin: 50px auto;
+  max-width: 600px;
+  padding: 30px;
+  text-align: center;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.error-container {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+
+.error-container a, .not-found a {
+  display: inline-block;
+  margin-top: 20px;
+  color: #2196F3;
+  text-decoration: none;
+}
+
+.error-container a:hover, .not-found a:hover {
+  text-decoration: underline;
 }

@@ -1,36 +1,64 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import BallotForm from '../components/BallotForm';
+import BallotCreated from '../components/BallotCreated';
+
+enum HomeState {
+  INITIAL,
+  CREATING_BALLOT,
+  BALLOT_CREATED
+}
 
 const Home: React.FC = () => {
-  const [apiStatus, setApiStatus] = useState<string>('Loading...');
+  const [state, setState] = useState<HomeState>(HomeState.INITIAL);
+  const [createdSlug, setCreatedSlug] = useState<string>('');
 
-  useEffect(() => {
-    // Check API health when component mounts
-    const checkApiHealth = async () => {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/health/`);
-        if (response.data.status === 'ok') {
-          setApiStatus('API is running');
-        } else {
-          setApiStatus('API returned unexpected response');
-        }
-      } catch (error) {
-        setApiStatus('API is not available');
-        console.error('Error checking API health:', error);
-      }
-    };
+  const handleCreateBallot = () => {
+    setState(HomeState.CREATING_BALLOT);
+  };
 
-    checkApiHealth();
-  }, []);
+  const handleBallotCreated = (slug: string) => {
+    setCreatedSlug(slug);
+    setState(HomeState.BALLOT_CREATED);
+  };
+
+  const handleCancel = () => {
+    setState(HomeState.INITIAL);
+  };
+
+  const handleCreateAnother = () => {
+    setState(HomeState.INITIAL);
+  };
 
   return (
     <div className="home-container">
       <h1>Ranked Choice Voting App</h1>
-      <p>Welcome to the Ranked Choice Voting application!</p>
-      <div className="api-status">
-        <h3>API Status:</h3>
-        <p>{apiStatus}</p>
-      </div>
+
+      {state === HomeState.INITIAL && (
+        <div className="welcome-section">
+          <p>Welcome to the Ranked Choice Voting application!</p>
+          <p>Create a new ballot to start collecting votes on your choices.</p>
+          <button 
+            className="create-ballot-btn" 
+            onClick={handleCreateBallot}
+          >
+            Create New Ballot
+          </button>
+        </div>
+      )}
+
+      {state === HomeState.CREATING_BALLOT && (
+        <BallotForm 
+          onSuccess={handleBallotCreated} 
+          onCancel={handleCancel} 
+        />
+      )}
+
+      {state === HomeState.BALLOT_CREATED && (
+        <BallotCreated 
+          slug={createdSlug} 
+          onCreateAnother={handleCreateAnother} 
+        />
+      )}
     </div>
   );
 };
