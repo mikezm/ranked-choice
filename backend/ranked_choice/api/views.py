@@ -35,27 +35,17 @@ def create_ballot(request):
             # Create repository
             ballot_repository = BallotRepository()
 
-            # Call workflow
-            create_ballot_workflow(
+            # Call workflow and get the slug
+            slug = create_ballot_workflow(
                 ballot_repository=ballot_repository,
                 title=title,
                 description=description,
                 choices=choices
             )
 
-            # Since we no longer have a ballot object returned, we need to get it from the repository
-            # We can use the slug which is derived from the title
-            from django.utils.text import slugify
-            slug = slugify(title)
-            ballot = ballot_repository.get_ballot_by_slug(slug)
-
-            # Return response
+            # Return response with only the slug
             return Response({
-                "id": ballot.id,
-                "slug": ballot.slug,
-                "title": ballot.title,
-                "created_at": ballot.created_at,
-                "updated_at": ballot.updated_at
+                "slug": slug
             }, status=status.HTTP_201_CREATED)
 
         except ValueError as e:

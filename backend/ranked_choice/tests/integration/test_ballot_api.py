@@ -33,7 +33,10 @@ class BallotAPITests(IntegrationTestCase):
         # Prepare data
         data = {
             'title': 'Test Ballot',
-            'description': 'This is a test ballot'
+            'description': 'This is a test ballot',
+            'choices': [
+                {'name': 'Option 1', 'description': 'Description 1'}
+            ]
         }
 
         # Make request
@@ -41,23 +44,25 @@ class BallotAPITests(IntegrationTestCase):
 
         # Assert response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertIn('id', response.data)
         self.assertIn('slug', response.data)
-        self.assertIn('title', response.data)
-        self.assertIn('created_at', response.data)
-        self.assertIn('updated_at', response.data)
-        self.assertEqual(response.data['title'], 'Test Ballot')
+        self.assertEqual(response.data['slug'], 'test-ballot')
 
         # Assert database state
-        ballot = Ballot.objects.get(id=response.data['id'])
+        ballot = Ballot.objects.get(slug=response.data['slug'])
         self.assertEqual(ballot.title, 'Test Ballot')
         self.assertEqual(ballot.slug, 'test-ballot')
 
-        # Assert that a choice was created with the description
-        choices = Choice.objects.filter(ballot=ballot)
-        self.assertEqual(choices.count(), 1)
-        self.assertEqual(choices[0].name, 'Description')
-        self.assertEqual(choices[0].description, 'This is a test ballot')
+        # Assert that choices were created
+        choices = Choice.objects.filter(ballot=ballot).order_by('name')
+        self.assertEqual(choices.count(), 2)  # 1 choice + 1 description
+
+        # Check the description choice
+        description_choice = choices.get(name='Description')
+        self.assertEqual(description_choice.description, 'This is a test ballot')
+
+        # Check the other choice
+        option1 = choices.get(name='Option 1')
+        self.assertEqual(option1.description, 'Description 1')
 
     def test_create_ballot_with_title_only(self):
         """
@@ -72,22 +77,25 @@ class BallotAPITests(IntegrationTestCase):
         response = self.client.post(self.create_ballot_url, data, format='json')
 
         # Assert response
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertIn('id', response.data)
-        self.assertIn('slug', response.data)
-        self.assertIn('title', response.data)
-        self.assertIn('created_at', response.data)
-        self.assertIn('updated_at', response.data)
-        self.assertEqual(response.data['title'], 'Test Ballot')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('choices', response.data)
 
-        # Assert database state
-        ballot = Ballot.objects.get(id=response.data['id'])
-        self.assertEqual(ballot.title, 'Test Ballot')
-        self.assertEqual(ballot.slug, 'test-ballot')
+    def test_create_ballot_with_empty_choices(self):
+        """
+        Test creating a ballot with empty choices list.
+        """
+        # Prepare data
+        data = {
+            'title': 'Test Ballot',
+            'choices': []
+        }
 
-        # Assert that no choices were created
-        choices = Choice.objects.filter(ballot=ballot)
-        self.assertEqual(choices.count(), 0)
+        # Make request
+        response = self.client.post(self.create_ballot_url, data, format='json')
+
+        # Assert response
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('choices', response.data)
 
     def test_create_ballot_with_empty_title(self):
         """
@@ -141,15 +149,11 @@ class BallotAPITests(IntegrationTestCase):
 
         # Assert response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertIn('id', response.data)
         self.assertIn('slug', response.data)
-        self.assertIn('title', response.data)
-        self.assertIn('created_at', response.data)
-        self.assertIn('updated_at', response.data)
-        self.assertEqual(response.data['title'], 'Test Ballot with Choices')
+        self.assertEqual(response.data['slug'], 'test-ballot-with-choices')
 
         # Assert database state
-        ballot = Ballot.objects.get(id=response.data['id'])
+        ballot = Ballot.objects.get(slug=response.data['slug'])
         self.assertEqual(ballot.title, 'Test Ballot with Choices')
         self.assertEqual(ballot.slug, 'test-ballot-with-choices')
 

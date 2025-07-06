@@ -8,7 +8,7 @@ def create_ballot_workflow(
     title: str,
     description: Optional[str] = None,
     choices: Optional[List[dict]] = None
-) -> None:
+) -> str:
     """
     Workflow to create a new ballot.
 
@@ -19,7 +19,7 @@ def create_ballot_workflow(
         choices: Optional list of choices, each with a name and description
 
     Returns:
-        None
+        str: The slug of the created ballot
 
     Raises:
         ValueError: If the title is empty
@@ -28,7 +28,12 @@ def create_ballot_workflow(
     if not title:
         raise ValueError("Ballot title cannot be empty")
 
+    # Generate the slug from the title
+    from django.utils.text import slugify
+    slug = slugify(title)
+
     # Create the ballot using the repository
     ballot_repository.create_ballot(title, description, choices)
 
-    # No return value
+    # Return the slug
+    return slug

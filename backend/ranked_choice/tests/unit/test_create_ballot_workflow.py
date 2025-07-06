@@ -28,8 +28,8 @@ class TestBallotWorkflows(unittest.TestCase):
         """
         Test creating a new ballot with valid data.
         """
-        # Call the workflow
-        create_ballot_workflow(
+        # Call the workflow and capture the return value
+        slug = create_ballot_workflow(
             ballot_repository=self.mock_repository,
             title="Test Ballot",
             description="This is a test ballot"
@@ -39,6 +39,9 @@ class TestBallotWorkflows(unittest.TestCase):
         self.mock_repository.create_ballot.assert_called_once_with(
             "Test Ballot", "This is a test ballot", None
         )
+
+        # Assert that the correct slug is returned
+        self.assertEqual(slug, "test-ballot")
 
     def test_create_new_ballot_with_empty_title(self):
         """
@@ -59,8 +62,8 @@ class TestBallotWorkflows(unittest.TestCase):
         """
         Test creating a new ballot without a description.
         """
-        # Call the workflow
-        create_ballot_workflow(
+        # Call the workflow and capture the return value
+        slug = create_ballot_workflow(
             ballot_repository=self.mock_repository,
             title="Test Ballot"
         )
@@ -69,6 +72,9 @@ class TestBallotWorkflows(unittest.TestCase):
         self.mock_repository.create_ballot.assert_called_once_with(
             "Test Ballot", None, None
         )
+
+        # Assert that the correct slug is returned
+        self.assertEqual(slug, "test-ballot")
 
     def test_create_new_ballot_with_choices(self):
         """
@@ -80,8 +86,8 @@ class TestBallotWorkflows(unittest.TestCase):
             {"name": "Option 2", "description": "Description 2"}
         ]
 
-        # Call the workflow
-        create_ballot_workflow(
+        # Call the workflow and capture the return value
+        slug = create_ballot_workflow(
             ballot_repository=self.mock_repository,
             title="Test Ballot",
             description="This is a test ballot",
@@ -92,6 +98,9 @@ class TestBallotWorkflows(unittest.TestCase):
         self.mock_repository.create_ballot.assert_called_once_with(
             "Test Ballot", "This is a test ballot", choices
         )
+
+        # Assert that the correct slug is returned
+        self.assertEqual(slug, "test-ballot")
 
 
 if __name__ == "__main__":
