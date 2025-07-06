@@ -5,7 +5,7 @@ from ranked_choice.core.models import Ballot, Choice
 from ranked_choice.core.domain.items.ballot_item import BallotItem, ChoiceItem
 
 
-def build_choices(ballot):
+def build_choices(ballot) -> List[ChoiceItem]:
     choices = Choice.objects.filter(ballot=ballot)
     choice_items = []
     for choice in choices:
@@ -35,10 +35,7 @@ class BallotRepository(BallotRepositoryInterface):
         Returns:
             None
         """
-        # Generate a slug from the title
         slug = slugify(title)
-
-        # Create the ballot
         ballot = Ballot.objects.create(
             title=title,
             slug=slug,
@@ -67,11 +64,8 @@ class BallotRepository(BallotRepositoryInterface):
         """
         try:
             ballot = Ballot.objects.get(slug=slug)
-
-            # Get all choices for this ballot
             choice_items = build_choices(ballot)
 
-            # Create and return the BallotItem
             return BallotItem(
                 title=ballot.title,
                 slug=ballot.slug,
