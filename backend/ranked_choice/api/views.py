@@ -4,8 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from ranked_choice.api.serializers import CreateBallotSerializer
-from ranked_choice.core.repositories.ballot_repository import BallotRepository
-from ranked_choice.core.workflows.ballot_workflows import create_new_ballot
+from ranked_choice.core.domain.workflows.create_ballot_workflow import create_ballot_workflow
 
 
 @api_view(['GET'])
@@ -21,7 +20,7 @@ def health_check(request):
 @permission_classes([AllowAny])
 def create_ballot(request):
     """
-    Create a new ballot with the given title and optional description.
+    Create a new ballot with the given title, optional description, and optional choices.
     """
     serializer = CreateBallotSerializer(data=request.data)
 
@@ -29,25 +28,19 @@ def create_ballot(request):
         # Get validated data
         title = serializer.validated_data['title']
         description = serializer.validated_data.get('description', None)
+        choices = serializer.validated_data.get('choices', None)
 
         try:
-            # Create repository
-            ballot_repository = BallotRepository()
-
-            # Call workflow
-            ballot = create_new_ballot(
-                ballot_repository=ballot_repository,
+            # Call workflow and get the slug
+            slug = create_ballot_workflow(
                 title=title,
+                choices=choices,
                 description=description
             )
 
-            # Return response
+            # Return response with only the slug
             return Response({
-                "id": ballot.id,
-                "slug": ballot.slug,
-                "title": ballot.title,
-                "created_at": ballot.created_at,
-                "updated_at": ballot.updated_at
+                "slug": slug
             }, status=status.HTTP_201_CREATED)
 
         except ValueError as e:
