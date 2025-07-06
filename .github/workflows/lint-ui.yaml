@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  lint:
+  lint-format-ui:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,3 +29,8 @@ jobs:
       run: |
         cd frontend
         npm run lint
+
+    - name: Run formatter
+      run: |
+        cd frontend
+        npm run format:check

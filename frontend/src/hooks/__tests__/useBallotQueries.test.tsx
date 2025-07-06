@@ -67,7 +67,7 @@ describe('useBallotQueries', () => {
       const mockError = new Error('API Error');
       mockGetBallot.mockRejectedValue(mockError);
 
-      const { result } = renderHook(() => useGetBallot('test-slug'), {
+      renderHook(() => useGetBallot('test-slug'), {
         wrapper: createWrapper(),
       });
 

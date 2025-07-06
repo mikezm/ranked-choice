@@ -1,7 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import userEvent from '@testing-library/user-event';
 import BallotForm from '../BallotForm';
 import { useCreateBallot } from '../../hooks/useBallotQueries';
 
@@ -54,17 +53,13 @@ describe('BallotForm Component', () => {
   test('validates required fields', async () => {
     render(<BallotForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
 
-    // Submit the form without filling required fields
-    await act(async () => {
-      fireEvent.click(screen.getByText('Create Ballot'));
-    });
+    fireEvent.click(screen.getByText('Create Ballot'));
 
-    // Check validation errors
     await waitFor(() => {
       expect(screen.getByText('Title is required')).toBeInTheDocument();
-      const choiceNameErrors = screen.getAllByText('Choice name is required');
-      expect(choiceNameErrors.length).toBe(2);
     });
+    const choiceNameErrors = screen.getAllByText('Choice name is required');
+    expect(choiceNameErrors.length).toBe(2);
 
     // Ensure form was not submitted
     expect(mockMutate).not.toHaveBeenCalled();
@@ -76,19 +71,14 @@ describe('BallotForm Component', () => {
     // Initially there should be 2 choices
     expect(screen.getAllByText(/Choice \d+ Name/).length).toBe(2);
 
-    // Add a new choice
-    await act(async () => {
-      fireEvent.click(screen.getByText('Add Another Choice'));
-    });
+    fireEvent.click(screen.getByText('Add Another Choice'));
 
     // Now there should be 3 choices
     expect(screen.getAllByText(/Choice \d+ Name/).length).toBe(3);
 
     // Remove the second choice
     const removeButtons = screen.getAllByText('Remove Choice');
-    await act(async () => {
-      fireEvent.click(removeButtons[1]);
-    });
+    fireEvent.click(removeButtons[1]);
 
     // Now there should be 2 choices again
     expect(screen.getAllByText(/Choice \d+ Name/).length).toBe(2);
@@ -97,24 +87,18 @@ describe('BallotForm Component', () => {
   test('submits the form with valid data', async () => {
     render(<BallotForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
 
-    // Fill in the form
-    await act(async () => {
-      fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Test Ballot' } });
+    fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Test Ballot' } });
       fireEvent.change(screen.getByLabelText('Description (optional)'), { target: { value: 'Test Description' } });
       fireEvent.change(screen.getByLabelText('Choice 1 Name'), { target: { value: 'Option 1' } });
       fireEvent.change(screen.getByLabelText('Choice 1 Description (optional)'), { target: { value: 'First option' } });
       fireEvent.change(screen.getByLabelText('Choice 2 Name'), { target: { value: 'Option 2' } });
-    });
 
     // Setup mock to simulate successful submission
     mockMutate.mockImplementation((data, options) => {
       options.onSuccess('test-slug');
     });
 
-    // Submit the form
-    await act(async () => {
-      fireEvent.click(screen.getByText('Create Ballot'));
-    });
+    fireEvent.click(screen.getByText('Create Ballot'));
 
     // Check if form was submitted with correct data
     await waitFor(() => {
@@ -138,22 +122,16 @@ describe('BallotForm Component', () => {
   test('handles submission error', async () => {
     render(<BallotForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
 
-    // Fill in the form
-    await act(async () => {
-      fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Test Ballot' } });
-      fireEvent.change(screen.getByLabelText('Choice 1 Name'), { target: { value: 'Option 1' } });
-      fireEvent.change(screen.getByLabelText('Choice 2 Name'), { target: { value: 'Option 2' } });
-    });
+    fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Test Ballot' } });
+    fireEvent.change(screen.getByLabelText('Choice 1 Name'), { target: { value: 'Option 1' } });
+    fireEvent.change(screen.getByLabelText('Choice 2 Name'), { target: { value: 'Option 2' } });
 
     // Setup mock to simulate error
     mockMutate.mockImplementation((data, options) => {
       options.onError(new Error('API Error'));
     });
 
-    // Submit the form
-    await act(async () => {
-      fireEvent.click(screen.getByText('Create Ballot'));
-    });
+    fireEvent.click(screen.getByText('Create Ballot'));
 
     // Check if error message is displayed
     await waitFor(() => {
@@ -167,10 +145,7 @@ describe('BallotForm Component', () => {
   test('calls onCancel when cancel button is clicked', async () => {
     render(<BallotForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
 
-    // Click the cancel button
-    await act(async () => {
-      fireEvent.click(screen.getByText('Cancel'));
-    });
+    fireEvent.click(screen.getByText('Cancel'));
 
     // Check if onCancel was called
     expect(mockOnCancel).toHaveBeenCalled();
