@@ -1,35 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getBallot, Ballot } from '../services/ballotService';
+import { useGetBallot } from '../hooks/useBallotQueries';
 
 const BallotDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const [ballot, setBallot] = useState<Ballot | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: ballot, isLoading, error } = useGetBallot(slug);
 
-  useEffect(() => {
-    const fetchBallot = async () => {
-      if (!slug) return;
-      
-      setLoading(true);
-      try {
-        const ballotData = await getBallot(slug);
-        setBallot(ballotData);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching ballot:', err);
-        setError('Failed to load ballot. It may not exist or there was a server error.');
-        setBallot(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBallot();
-  }, [slug]);
-
-  if (loading) {
+  if (isLoading) {
     return <div className="loading">Loading ballot...</div>;
   }
 
@@ -37,7 +14,7 @@ const BallotDetail: React.FC = () => {
     return (
       <div className="error-container">
         <h2>Error</h2>
-        <p>{error}</p>
+        <p>Failed to load ballot. It may not exist or there was a server error.</p>
         <Link to="/">Return to Home</Link>
       </div>
     );
@@ -57,7 +34,7 @@ const BallotDetail: React.FC = () => {
     <div className="ballot-detail">
       <h1>{ballot.title}</h1>
       {ballot.description && <p className="ballot-description">{ballot.description}</p>}
-      
+
       <h2>Choices</h2>
       <div className="choices-list">
         {ballot.choices.map((choice, index) => (
@@ -67,9 +44,11 @@ const BallotDetail: React.FC = () => {
           </div>
         ))}
       </div>
-      
+
       <div className="actions">
-        <Link to="/" className="back-link">Back to Home</Link>
+        <Link to="/" className="back-link">
+          Back to Home
+        </Link>
       </div>
     </div>
   );

@@ -12,7 +12,9 @@ const BallotCreated: React.FC<BallotCreatedProps> = ({ slug, onCreateAnother }) 
       <h2>Ballot Created Successfully!</h2>
       <p>Your ballot has been created and is available at:</p>
       <div className="ballot-link">
-        <Link to={`/ballot/${slug}`}>{window.location.origin}/ballot/{slug}</Link>
+        <Link to={`/ballot/${slug}`}>
+          {window.location.origin}/ballot/{slug}
+        </Link>
       </div>
       <div className="actions">
         <button onClick={onCreateAnother} className="create-another-btn">

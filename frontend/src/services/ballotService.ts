@@ -31,10 +31,7 @@ export interface Ballot {
  */
 export const createBallot = async (ballotData: CreateBallotRequest): Promise<string> => {
   try {
-    const response = await axios.post<CreateBallotResponse>(
-      `${API_URL}/api/ballots/`, 
-      ballotData
-    );
+    const response = await axios.post<CreateBallotResponse>(`${API_URL}/api/ballots/`, ballotData);
     return response.data.slug;
   } catch (error) {
     console.error('Error creating ballot:', error);

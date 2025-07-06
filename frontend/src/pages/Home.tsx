@@ -5,7 +5,7 @@ import BallotCreated from '../components/BallotCreated';
 enum HomeState {
   INITIAL,
   CREATING_BALLOT,
-  BALLOT_CREATED
+  BALLOT_CREATED,
 }
 
 const Home: React.FC = () => {
@@ -37,27 +37,18 @@ const Home: React.FC = () => {
         <div className="welcome-section">
           <p>Welcome to the Ranked Choice Voting application!</p>
           <p>Create a new ballot to start collecting votes on your choices.</p>
-          <button 
-            className="create-ballot-btn" 
-            onClick={handleCreateBallot}
-          >
+          <button className="create-ballot-btn" onClick={handleCreateBallot}>
             Create New Ballot
           </button>
         </div>
       )}
 
       {state === HomeState.CREATING_BALLOT && (
-        <BallotForm 
-          onSuccess={handleBallotCreated} 
-          onCancel={handleCancel} 
-        />
+        <BallotForm onSuccess={handleBallotCreated} onCancel={handleCancel} />
       )}
 
       {state === HomeState.BALLOT_CREATED && (
-        <BallotCreated 
-          slug={createdSlug} 
-          onCreateAnother={handleCreateAnother} 
-        />
+        <BallotCreated slug={createdSlug} onCreateAnother={handleCreateAnother} />
       )}
     </div>
   );

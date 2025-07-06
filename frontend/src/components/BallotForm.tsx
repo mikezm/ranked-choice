@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { createBallot, Choice } from '../services/ballotService';
+import { Choice } from '../services/ballotService';
+import { useCreateBallot } from '../hooks/useBallotQueries';
 
 interface BallotFormProps {
   onSuccess: (slug: string) => void;
@@ -20,7 +21,7 @@ interface FormErrors {
 }
 
 const BallotForm: React.FC<BallotFormProps> = ({ onSuccess, onCancel }) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const createBallotMutation = useCreateBallot();
   const [error, setError] = useState<string | null>(null);
 
   // Form state
@@ -42,7 +43,10 @@ const BallotForm: React.FC<BallotFormProps> = ({ onSuccess, onCancel }) => {
   const [touched, setTouched] = useState({
     title: false,
     description: false,
-    choices: [{ name: false, description: false }, { name: false, description: false }],
+    choices: [
+      { name: false, description: false },
+      { name: false, description: false },
+    ],
   });
 
   // Validate form
@@ -107,30 +111,32 @@ const BallotForm: React.FC<BallotFormProps> = ({ onSuccess, onCancel }) => {
 
     // Check if there are any errors
     if (
-      errors.title || 
-      errors.description || 
-      errors.choices || 
+      errors.title ||
+      errors.description ||
+      errors.choices ||
       (errors.choiceErrors && errors.choiceErrors.some(error => Object.keys(error).length > 0))
     ) {
       return;
     }
 
-    // Submit form
-    setIsSubmitting(true);
+    // Submit form using react-query mutation
     setError(null);
-    try {
-      const slug = await createBallot({
+    createBallotMutation.mutate(
+      {
         title: formValues.title,
         description: formValues.description || undefined,
         choices: formValues.choices,
-      });
-      onSuccess(slug);
-    } catch (err) {
-      setError('Failed to create ballot. Please try again.');
-      console.error('Error submitting form:', err);
-    } finally {
-      setIsSubmitting(false);
-    }
+      },
+      {
+        onSuccess: slug => {
+          onSuccess(slug);
+        },
+        onError: err => {
+          setError('Failed to create ballot. Please try again.');
+          console.error('Error submitting form:', err);
+        },
+      }
+    );
   };
 
   // Handle input change
@@ -179,7 +185,7 @@ const BallotForm: React.FC<BallotFormProps> = ({ onSuccess, onCancel }) => {
         if (!newTouched.choices[index]) {
           newTouched.choices[index] = { name: false, description: false };
         }
-        newTouched.choices[index][field as keyof typeof newTouched.choices[0]] = true;
+        newTouched.choices[index][field as keyof (typeof newTouched.choices)[0]] = true;
 
         setTouched(newTouched);
 
@@ -272,9 +278,7 @@ const BallotForm: React.FC<BallotFormProps> = ({ onSuccess, onCancel }) => {
         </div>
 
         <h3>Choices</h3>
-        {formErrors.choices && (
-          <div className="error">{formErrors.choices}</div>
-        )}
+        {formErrors.choices && <div className="error">{formErrors.choices}</div>}
         {formValues.choices.map((choice: Choice, index: number) => (
           <div key={index} className="choice-container">
             <div className="form-group">
@@ -287,14 +291,15 @@ const BallotForm: React.FC<BallotFormProps> = ({ onSuccess, onCancel }) => {
                 onBlur={handleBlur}
                 value={choice.name}
               />
-              {touched.choices?.[index]?.name && 
-               formErrors.choiceErrors?.[index]?.name ? (
+              {touched.choices?.[index]?.name && formErrors.choiceErrors?.[index]?.name ? (
                 <div className="error">{formErrors.choiceErrors[index].name}</div>
               ) : null}
             </div>
 
             <div className="form-group">
-              <label htmlFor={`choices[${index}].description`}>Choice {index + 1} Description (optional)</label>
+              <label htmlFor={`choices[${index}].description`}>
+                Choice {index + 1} Description (optional)
+              </label>
               <input
                 id={`choices[${index}].description`}
                 name={`choices[${index}].description`}
@@ -303,8 +308,8 @@ const BallotForm: React.FC<BallotFormProps> = ({ onSuccess, onCancel }) => {
                 onBlur={handleBlur}
                 value={choice.description}
               />
-              {touched.choices?.[index]?.description && 
-               formErrors.choiceErrors?.[index]?.description ? (
+              {touched.choices?.[index]?.description &&
+              formErrors.choiceErrors?.[index]?.description ? (
                 <div className="error">{formErrors.choiceErrors[index].description}</div>
               ) : null}
             </div>
@@ -321,20 +326,16 @@ const BallotForm: React.FC<BallotFormProps> = ({ onSuccess, onCancel }) => {
           </div>
         ))}
 
-        <button
-          type="button"
-          onClick={addChoice}
-          className="add-choice-btn"
-        >
+        <button type="button" onClick={addChoice} className="add-choice-btn">
           Add Another Choice
         </button>
 
         <div className="form-actions">
-          <button type="button" onClick={onCancel} disabled={isSubmitting}>
+          <button type="button" onClick={onCancel} disabled={createBallotMutation.isLoading}>
             Cancel
           </button>
-          <button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Creating...' : 'Create Ballot'}
+          <button type="submit" disabled={createBallotMutation.isLoading}>
+            {createBallotMutation.isLoading ? 'Creating...' : 'Create Ballot'}
           </button>
         </div>
       </form>
