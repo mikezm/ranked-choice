@@ -1,4 +1,3 @@
-# Update the import to use the full path
 from ranked_choice.core.repositories.ballot_repository import BallotRepository
 from ranked_choice.tests.integration.integration_test_case import IntegrationTestCase
 
