@@ -84,7 +84,7 @@ describe('BallotForm Component', () => {
     expect(screen.getAllByText(/Choice \d+/).length).toBe(3);
 
     // Remove the second choice
-    const removeButtons = screen.getAllByText('Remove Choice');
+    const removeButtons = screen.getAllByLabelText('Remove Choice');
     fireEvent.click(removeButtons[1]);
 
     // Now there should be 2 choices again

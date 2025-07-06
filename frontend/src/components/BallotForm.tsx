@@ -1,6 +1,8 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { Choice } from '../services/ballotService';
 import { useCreateBallot } from '../hooks/useBallotQueries';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faX } from '@fortawesome/free-solid-svg-icons';
 
 interface BallotFormProps {
   onSuccess: (slug: string) => void;
@@ -243,6 +245,26 @@ const BallotForm: React.FC<BallotFormProps> = ({ onSuccess, onCancel }) => {
     }
   };
 
+  // Styles for components
+  const styles = {
+    choiceHeader: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      position: 'relative' as const
+    },
+    removeChoiceIcon: {
+      background: '#e0e0e0',
+      border: 'none',
+      color: '#ff0000',
+      fontSize: '16px',
+      cursor: 'pointer',
+      padding: '5px',
+      marginLeft: '10px',
+      borderRadius: '4px'
+    }
+  };
+
   return (
     <div className="ballot-form">
       <h2>Create New Ballot</h2>
@@ -281,7 +303,19 @@ const BallotForm: React.FC<BallotFormProps> = ({ onSuccess, onCancel }) => {
         {formErrors.choices && <div className="error">{formErrors.choices}</div>}
         {formValues.choices.map((choice: Choice, index: number) => (
           <div key={index} className="choice-container">
-            <h4>Choice {index + 1}</h4>
+            <div style={styles.choiceHeader}>
+              <h4>Choice {index + 1}</h4>
+              {formValues.choices.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeChoice(index)}
+                  style={styles.removeChoiceIcon}
+                  aria-label="Remove Choice"
+                >
+                  <FontAwesomeIcon icon={faX} />
+                </button>
+              )}
+            </div>
             <div className="form-group">
               <label htmlFor={`choices[${index}].name`}>Name</label>
               <input
@@ -312,16 +346,6 @@ const BallotForm: React.FC<BallotFormProps> = ({ onSuccess, onCancel }) => {
                 <div className="error">{formErrors.choiceErrors[index].description}</div>
               ) : null}
             </div>
-
-            {formValues.choices.length > 1 && (
-              <button
-                type="button"
-                onClick={() => removeChoice(index)}
-                className="remove-choice-btn"
-              >
-                Remove Choice
-              </button>
-            )}
           </div>
         ))}
 
