@@ -24,10 +24,9 @@ class TestDjangoBallotRepository(IntegrationTestCase):
         choices = [
             {"name": "Option 1", "description": "Description 1"}
         ]
-        self.repository.create_ballot(title="Test Ballot", choices=choices)
-        # Since create_ballot no longer returns a ballot, we need to retrieve it
-        from django.utils.text import slugify
-        slug = slugify("Test Ballot")
+        slug = self.repository.create_ballot(title="Test Ballot", choices=choices)
+        # Verify the returned slug
+        self.assertEqual(slug, "test-ballot")
         ballot = self.repository.get_ballot_by_slug(slug)
         self.assertIsNotNone(ballot)
         self.assertEqual(ballot.title, "Test Ballot")
@@ -43,14 +42,13 @@ class TestDjangoBallotRepository(IntegrationTestCase):
         choices = [
             {"name": "Option 1", "description": "Description 1"}
         ]
-        self.repository.create_ballot(
+        slug = self.repository.create_ballot(
             title="Test Ballot",
             choices=choices,
             description="This is a test ballot"
         )
-        # Since create_ballot no longer returns a ballot, we need to retrieve it
-        from django.utils.text import slugify
-        slug = slugify("Test Ballot")
+        # Verify the returned slug
+        self.assertEqual(slug, "test-ballot")
         ballot = self.repository.get_ballot_by_slug(slug)
         self.assertIsNotNone(ballot)
         self.assertEqual(ballot.title, "Test Ballot")
@@ -67,10 +65,9 @@ class TestDjangoBallotRepository(IntegrationTestCase):
         choices = [
             {"name": "Option 1", "description": "Description 1"}
         ]
-        self.repository.create_ballot(title="Test Ballot", choices=choices)
-        # Since create_ballot no longer returns a ballot, we need to retrieve it
-        from django.utils.text import slugify
-        slug = slugify("Test Ballot")
+        slug = self.repository.create_ballot(title="Test Ballot", choices=choices)
+        # Verify the returned slug
+        self.assertEqual(slug, "test-ballot")
         ballot = self.repository.get_ballot_by_slug(slug)
         retrieved_ballot = self.repository.get_ballot_by_slug(ballot.slug)
         self.assertIsNotNone(retrieved_ballot)
@@ -97,13 +94,12 @@ class TestDjangoBallotRepository(IntegrationTestCase):
         choices2 = [
             {"name": "Option 2", "description": "Description 2"}
         ]
-        self.repository.create_ballot(title="Test Ballot 1", choices=choices1)
-        self.repository.create_ballot(title="Test Ballot 2", choices=choices2)
+        slug1 = self.repository.create_ballot(title="Test Ballot 1", choices=choices1)
+        slug2 = self.repository.create_ballot(title="Test Ballot 2", choices=choices2)
 
-        # Since create_ballot no longer returns a ballot, we need to retrieve them
-        from django.utils.text import slugify
-        slug1 = slugify("Test Ballot 1")
-        slug2 = slugify("Test Ballot 2")
+        # Verify the returned slugs
+        self.assertEqual(slug1, "test-ballot-1")
+        self.assertEqual(slug2, "test-ballot-2")
 
         ballots = self.repository.list_ballots()
         self.assertEqual(len(ballots), 2)
@@ -130,15 +126,14 @@ class TestDjangoBallotRepository(IntegrationTestCase):
             {"name": "Option 2", "description": "Description 2"}
         ]
 
-        self.repository.create_ballot(
+        slug = self.repository.create_ballot(
             title="Test Ballot",
             choices=choices,
             description="This is a test ballot"
         )
 
-        # Since create_ballot no longer returns a ballot, we need to retrieve it
-        from django.utils.text import slugify
-        slug = slugify("Test Ballot")
+        # Verify the returned slug
+        self.assertEqual(slug, "test-ballot")
         ballot = self.repository.get_ballot_by_slug(slug)
 
         self.assertIsNotNone(ballot)

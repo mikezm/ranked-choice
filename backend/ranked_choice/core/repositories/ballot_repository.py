@@ -23,7 +23,7 @@ class BallotRepository(BallotRepositoryInterface):
     Uses Django models to interact with the database.
     """
 
-    def create_ballot(self, title: str, choices: List[dict], description: Optional[str] = None) -> None:
+    def create_ballot(self, title: str, choices: List[dict], description: Optional[str] = None) -> str:
         """
         Create a new ballot with the given title, choices, and optional description.
 
@@ -33,7 +33,7 @@ class BallotRepository(BallotRepositoryInterface):
             description: Optional description for the ballot
 
         Returns:
-            None
+            str: The slug of the created ballot
         """
         slug = slugify(title)
         ballot = Ballot.objects.create(
@@ -50,7 +50,7 @@ class BallotRepository(BallotRepositoryInterface):
                 description=choice.get('description', '')
             )
 
-        # No return value
+        return slug
 
     def get_ballot_by_slug(self, slug: str) -> Optional[BallotItem]:
         """

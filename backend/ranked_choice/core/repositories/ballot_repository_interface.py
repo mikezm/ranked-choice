@@ -11,7 +11,7 @@ class BallotRepositoryInterface(ABC):
     """
 
     @abstractmethod
-    def create_ballot(self, title: str, choices: List[dict], description: Optional[str] = None) -> None:
+    def create_ballot(self, title: str, choices: List[dict], description: Optional[str] = None) -> str:
         """
         Create a new ballot with the given title, choices, and optional description.
 
@@ -21,7 +21,7 @@ class BallotRepositoryInterface(ABC):
             description: Optional description for the ballot
 
         Returns:
-            None
+            str: The slug of the created ballot
         """
         pass
 

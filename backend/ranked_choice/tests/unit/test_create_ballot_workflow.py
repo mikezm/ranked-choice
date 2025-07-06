@@ -23,7 +23,8 @@ class TestCreateBallotWorkflow(unittest.TestCase):
 
         # Create a mock repository
         self.mock_repository = Mock(spec=BallotRepositoryInterface)
-        # No return value for create_ballot as it now returns None
+        # Configure create_ballot to return the slug
+        self.mock_repository.create_ballot.return_value = "test-ballot"
 
     def test_create_new_ballot_with_valid_data(self):
         """
