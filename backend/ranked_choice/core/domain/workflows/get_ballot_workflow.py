@@ -1,7 +1,6 @@
 from typing import Optional
 
-from core.domain.items.ballot_item import BallotItem
-
+from ranked_choice.core.domain.items.ballot_item import BallotItem
 from ranked_choice.core.repositories.ballot_repository import (
     BallotRepository,
     BallotRepositoryInterface,

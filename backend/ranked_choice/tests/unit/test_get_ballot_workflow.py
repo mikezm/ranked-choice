@@ -1,11 +1,11 @@
 import unittest
 from unittest.mock import Mock
 
-from ranked_choice.core.domain.items.ballot_item import BallotItem, ChoiceItem
-from ranked_choice.core.domain.workflows.get_ballot_workflow import get_ballot_workflow
 from django.utils.text import slugify
 from faker import Faker
 
+from ranked_choice.core.domain.items.ballot_item import BallotItem, ChoiceItem
+from ranked_choice.core.domain.workflows.get_ballot_workflow import get_ballot_workflow
 from ranked_choice.core.repositories.ballot_repository import BallotRepositoryInterface
 
 
