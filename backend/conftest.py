@@ -1,5 +1,5 @@
 import os
-import pytest
+
 import django
 from django.conf import settings
 
@@ -23,7 +23,8 @@ django.setup()
 def pytest_configure():
     """Configure Django for testing before tests run."""
     # Ensure database configuration exists
-    if not hasattr(settings, 'DATABASES') or not settings.DATABASES or 'default' not in settings.DATABASES:
+    if (not hasattr(settings, 'DATABASES') or not settings.DATABASES or
+            'default' not in settings.DATABASES):
         settings.DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',

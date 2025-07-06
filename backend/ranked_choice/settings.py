@@ -1,9 +1,10 @@
 """
 Django settings for ranked_choice project.
 """
-
 import os
+import sys
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -66,12 +67,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ranked_choice.wsgi.application'
-
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-# Check if running in test mode
-import sys
 TESTING = 'pytest' in sys.modules or 'test' in sys.argv
 
 if TESTING:
@@ -103,7 +98,8 @@ else:
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME':
+            'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',

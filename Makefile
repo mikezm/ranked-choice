@@ -1,4 +1,4 @@
-.PHONY: start build makemigration migrate
+.PHONY: start build makemigration migrate lint lint-fix
 
 # Start all services
 start:
@@ -15,3 +15,11 @@ migration:
 # Apply migrations to the database
 migrate:
 	docker compose exec backend python manage.py migrate
+
+# Run Ruff linter on backend code
+lint:
+	docker compose exec backend ruff check .
+
+# Run Ruff linter with automatic fixes on backend code
+lint-fix:
+	docker compose exec backend ruff check --fix .

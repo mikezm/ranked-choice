@@ -1,9 +1,7 @@
 import os
-import django
-from django.test import TestCase
-from django.conf import settings
-from django.core.management import call_command
+
 from django.db import connections
+from django.test import TestCase
 
 # Configure database settings at module level before any tests run
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ranked_choice.settings')
@@ -33,9 +31,10 @@ class IntegrationTestCase(TestCase):
         db_engine = connections['default'].settings_dict['ENGINE']
 
         # Allow both PostgreSQL test databases and SQLite in-memory databases
-        is_test_db = db_name.startswith('test_') or db_name == ':memory:' or 'sqlite' in db_engine
+        is_test_db = (db_name.startswith('test_')
+                      or db_name == ':memory:' or 'sqlite' in db_engine)
         if not is_test_db:
-            self.fail(f"Tests are not using a test database! Current database: {db_name} with engine {db_engine}")
+            self.fail(f"Not using a test database! Current database: {db_name}")
         super().setUp()
 
     @classmethod

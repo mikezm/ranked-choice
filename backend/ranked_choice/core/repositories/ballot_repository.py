@@ -1,66 +1,24 @@
-from abc import ABC, abstractmethod
-from typing import Optional, List
+from typing import List, Optional
+
 from django.utils.text import slugify
 
+from ranked_choice.core.domain.items.ballot_item import BallotItem, ChoiceItem
 from ranked_choice.core.models import Ballot, Choice
+from ranked_choice.core.repositories.ballot_repository_interface import (
+    BallotRepositoryInterface,
+)
 
 
-class BallotRepositoryInterface(ABC):
-    """
-    Abstract base class for ballot repository.
-    Defines the interface for ballot operations.
-    """
+def build_choices(ballot) -> List[ChoiceItem]:
+    choices = Choice.objects.filter(ballot=ballot)
+    choice_items = []
+    for choice in choices:
+        choice_items.append(ChoiceItem(
+            name=choice.name,
+            description=choice.description
+        ))
 
-    @abstractmethod
-    def create_ballot(self, title: str, description: Optional[str] = None, choices: Optional[List[dict]] = None) -> None:
-        """
-        Create a new ballot with the given title, optional description, and optional choices.
-
-        Args:
-            title: The title of the ballot
-            description: Optional description for the ballot
-            choices: Optional list of choices, each with a name and description
-
-        Returns:
-            None
-        """
-        pass
-
-    @abstractmethod
-    def get_ballot_by_id(self, ballot_id: int) -> Optional[Ballot]:
-        """
-        Get a ballot by its ID.
-
-        Args:
-            ballot_id: The ID of the ballot to retrieve
-
-        Returns:
-            The Ballot object if found, None otherwise
-        """
-        pass
-
-    @abstractmethod
-    def get_ballot_by_slug(self, slug: str) -> Optional[Ballot]:
-        """
-        Get a ballot by its slug.
-
-        Args:
-            slug: The slug of the ballot to retrieve
-
-        Returns:
-            The Ballot object if found, None otherwise
-        """
-        pass
-
-    @abstractmethod
-    def list_ballots(self) -> List[Ballot]:
-        """
-        List all ballots.
-
-        Returns:
-            A list of all Ballot objects
-        """
-        pass
+    return choice_items
 
 
 class BallotRepository(BallotRepositoryInterface):
@@ -69,62 +27,41 @@ class BallotRepository(BallotRepositoryInterface):
     Uses Django models to interact with the database.
     """
 
-    def create_ballot(self, title: str, description: Optional[str] = None, choices: Optional[List[dict]] = None) -> None:
+    def create_ballot(
+            self,
+            title: str,
+            choices: List[dict],
+            description: Optional[str] = None
+    ) -> str:
         """
-        Create a new ballot with the given title, optional description, and optional choices.
+        Create a new ballot with the given title, choices, and optional description.
 
         Args:
             title: The title of the ballot
+            choices: List of choices, each with a name and description
             description: Optional description for the ballot
-            choices: Optional list of choices, each with a name and description
 
         Returns:
-            None
+            str: The slug of the created ballot
         """
-        # Generate a slug from the title
         slug = slugify(title)
-
-        # Create the ballot
         ballot = Ballot.objects.create(
             title=title,
-            slug=slug
+            slug=slug,
+            description=description
         )
 
-        # If description is provided, add it to the ballot
-        if description:
+        # Create the choices
+        for choice in choices:
             Choice.objects.create(
                 ballot=ballot,
-                name="Description",
-                description=description
+                name=choice['name'],
+                description=choice.get('description', '')
             )
 
-        # If choices are provided, create them
-        if choices:
-            for choice in choices:
-                Choice.objects.create(
-                    ballot=ballot,
-                    name=choice['name'],
-                    description=choice.get('description', '')
-                )
+        return slug
 
-        # No return value
-
-    def get_ballot_by_id(self, ballot_id: int) -> Optional[Ballot]:
-        """
-        Get a ballot by its ID.
-
-        Args:
-            ballot_id: The ID of the ballot to retrieve
-
-        Returns:
-            The Ballot object if found, None otherwise
-        """
-        try:
-            return Ballot.objects.get(id=ballot_id)
-        except Ballot.DoesNotExist:
-            return None
-
-    def get_ballot_by_slug(self, slug: str) -> Optional[Ballot]:
+    def get_ballot_by_slug(self, slug: str) -> Optional[BallotItem]:
         """
         Get a ballot by its slug.
 
@@ -132,18 +69,38 @@ class BallotRepository(BallotRepositoryInterface):
             slug: The slug of the ballot to retrieve
 
         Returns:
-            The Ballot object if found, None otherwise
+            The BallotItem object if found, None otherwise
         """
         try:
-            return Ballot.objects.get(slug=slug)
+            ballot = Ballot.objects.get(slug=slug)
+            choice_items = build_choices(ballot)
+
+            return BallotItem(
+                title=ballot.title,
+                slug=ballot.slug,
+                description=ballot.description,
+                choices=choice_items
+            )
         except Ballot.DoesNotExist:
             return None
 
-    def list_ballots(self) -> List[Ballot]:
+    def list_ballots(self) -> List[BallotItem]:
         """
         List all ballots.
 
         Returns:
-            A list of all Ballot objects
+            A list of all BallotItem objects
         """
-        return list(Ballot.objects.all())
+        ballots = Ballot.objects.all()
+        ballot_items = []
+
+        for ballot in ballots:
+            choice_items = build_choices(ballot)
+            ballot_items.append(BallotItem(
+                title=ballot.title,
+                slug=ballot.slug,
+                description=ballot.description,
+                choices=choice_items
+            ))
+
+        return ballot_items

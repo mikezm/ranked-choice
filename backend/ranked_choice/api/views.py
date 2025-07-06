@@ -1,10 +1,13 @@
+from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework import status
 
-from ranked_choice.api.serializers import CreateBallotSerializer
-from ranked_choice.core.domain.workflows.create_ballot_workflow import create_ballot_workflow
+from ranked_choice.api.serializers import BallotDetailSerializer, CreateBallotSerializer
+from ranked_choice.core.domain.workflows.create_ballot_workflow import (
+    create_ballot_workflow,
+)
+from ranked_choice.core.domain.workflows.get_ballot_workflow import get_ballot_workflow
 
 
 @api_view(['GET'])
@@ -20,7 +23,7 @@ def health_check(request):
 @permission_classes([AllowAny])
 def create_ballot(request):
     """
-    Create a new ballot with the given title, optional description, and optional choices.
+    Create a new ballot with the given title, choices, and optional description.
     """
     serializer = CreateBallotSerializer(data=request.data)
 
@@ -47,3 +50,41 @@ def create_ballot(request):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_ballot(request, slug):
+    """
+        Retrieve a ballot using its slug from the URL path.
+
+        Args:
+            request: The HTTP request object
+            slug: The unique identifier for the ballot
+
+        Returns:
+            Response with serialized ballot data or the appropriate error message
+        """
+    try:
+        ballot_item = get_ballot_workflow(slug=slug)
+
+        if ballot_item is None:
+            return Response(
+                {"error": "Ballot not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = BallotDetailSerializer(ballot_item)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    except ValueError as e:
+        return Response(
+            {"error": str(e)},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    except Exception:
+        return Response(
+            {"error": "Internal server error"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

@@ -1,5 +1,9 @@
-from typing import Optional, List
-from ranked_choice.core.repositories.ballot_repository import BallotRepository, BallotRepositoryInterface
+from typing import List, Optional
+
+from ranked_choice.core.repositories.ballot_repository import (
+    BallotRepository,
+    BallotRepositoryInterface,
+)
 
 
 def create_ballot_workflow(
@@ -30,15 +34,6 @@ def create_ballot_workflow(
     if not choices:
         raise ValueError("Choices cannot be empty")
 
-    # Use provided repository or create a new one
     repository = ballot_repository or BallotRepository()
 
-    # Generate the slug from the title
-    from django.utils.text import slugify
-    slug = slugify(title)
-
-    # Create the ballot using the repository
-    repository.create_ballot(title, description, choices)
-
-    # Return the slug
-    return slug
+    return repository.create_ballot(title, choices, description)
