@@ -1,3 +1,4 @@
+import uuid
 from typing import List, Optional
 
 from django.utils.text import slugify
@@ -44,7 +45,9 @@ class BallotRepository(BallotRepositoryInterface):
         Returns:
             str: The slug of the created ballot
         """
-        slug = slugify(title)
+        unique_id = str(uuid.uuid4())[:8]
+        slug = f'{slugify(title)}-{unique_id}'
+
         ballot = Ballot.objects.create(
             title=title,
             slug=slug,
