@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from ranked_choice.api.serializers import CreateBallotSerializer
-from ranked_choice.core.repositories.ballot_repository import BallotRepository
 from ranked_choice.core.domain.workflows.create_ballot_workflow import create_ballot_workflow
 
 
@@ -32,15 +31,11 @@ def create_ballot(request):
         choices = serializer.validated_data.get('choices', None)
 
         try:
-            # Create repository
-            ballot_repository = BallotRepository()
-
             # Call workflow and get the slug
             slug = create_ballot_workflow(
-                ballot_repository=ballot_repository,
                 title=title,
-                description=description,
-                choices=choices
+                choices=choices,
+                description=description
             )
 
             # Return response with only the slug

@@ -28,16 +28,22 @@ class TestBallotWorkflows(unittest.TestCase):
         """
         Test creating a new ballot with valid data.
         """
+        # Define choices
+        choices = [
+            {"name": "Option 1", "description": "Description 1"}
+        ]
+
         # Call the workflow and capture the return value
         slug = create_ballot_workflow(
-            ballot_repository=self.mock_repository,
             title="Test Ballot",
-            description="This is a test ballot"
+            choices=choices,
+            description="This is a test ballot",
+            ballot_repository=self.mock_repository
         )
 
         # Assert that the repository's create_ballot method was called with the correct arguments
         self.mock_repository.create_ballot.assert_called_once_with(
-            "Test Ballot", "This is a test ballot", None
+            "Test Ballot", "This is a test ballot", choices
         )
 
         # Assert that the correct slug is returned
@@ -47,11 +53,17 @@ class TestBallotWorkflows(unittest.TestCase):
         """
         Test creating a new ballot with an empty title.
         """
+        # Define choices
+        choices = [
+            {"name": "Option 1", "description": "Description 1"}
+        ]
+
         # Assert that calling the workflow with an empty title raises a ValueError
         with self.assertRaises(ValueError):
             create_ballot_workflow(
                 ballot_repository=self.mock_repository,
                 title="",
+                choices=choices,
                 description="This is a test ballot"
             )
 
@@ -62,15 +74,21 @@ class TestBallotWorkflows(unittest.TestCase):
         """
         Test creating a new ballot without a description.
         """
+        # Define choices
+        choices = [
+            {"name": "Option 1", "description": "Description 1"}
+        ]
+
         # Call the workflow and capture the return value
         slug = create_ballot_workflow(
             ballot_repository=self.mock_repository,
-            title="Test Ballot"
+            title="Test Ballot",
+            choices=choices
         )
 
         # Assert that the repository's create_ballot method was called with the correct arguments
         self.mock_repository.create_ballot.assert_called_once_with(
-            "Test Ballot", None, None
+            "Test Ballot", None, choices
         )
 
         # Assert that the correct slug is returned
@@ -90,8 +108,8 @@ class TestBallotWorkflows(unittest.TestCase):
         slug = create_ballot_workflow(
             ballot_repository=self.mock_repository,
             title="Test Ballot",
-            description="This is a test ballot",
-            choices=choices
+            choices=choices,
+            description="This is a test ballot"
         )
 
         # Assert that the repository's create_ballot method was called with the correct arguments
@@ -101,6 +119,22 @@ class TestBallotWorkflows(unittest.TestCase):
 
         # Assert that the correct slug is returned
         self.assertEqual(slug, "test-ballot")
+
+    def test_create_new_ballot_with_empty_choices(self):
+        """
+        Test creating a new ballot with empty choices.
+        """
+        # Assert that calling the workflow with empty choices raises a ValueError
+        with self.assertRaises(ValueError):
+            create_ballot_workflow(
+                ballot_repository=self.mock_repository,
+                title="Test Ballot",
+                choices=[],
+                description="This is a test ballot"
+            )
+
+        # Assert that the repository's create_ballot method was not called
+        self.mock_repository.create_ballot.assert_not_called()
 
 
 if __name__ == "__main__":
