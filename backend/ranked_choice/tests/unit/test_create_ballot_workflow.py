@@ -5,7 +5,7 @@ from ranked_choice.core.repositories.ballot_repository import BallotRepositoryIn
 from ranked_choice.core.domain.workflows.create_ballot_workflow import create_ballot_workflow
 
 
-class TestBallotWorkflows(unittest.TestCase):
+class TestCreateBallotWorkflow(unittest.TestCase):
     """
     Unit tests for ballot workflows.
     """
