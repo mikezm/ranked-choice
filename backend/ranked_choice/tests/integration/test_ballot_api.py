@@ -10,7 +10,7 @@ from rest_framework.test import APIClient
 
 from ranked_choice.core.models import Ballot, Choice
 from ranked_choice.core.repositories.ballot_repository import BallotRepository as DjangoBallotRepository
-from tests.integration.integration_test_case import IntegrationTestCase
+from ranked_choice.tests.integration.integration_test_case import IntegrationTestCase
 
 
 class BallotAPITests(IntegrationTestCase):
