@@ -5,7 +5,7 @@ from rest_framework import status
 
 from ranked_choice.api.serializers import CreateBallotSerializer
 from ranked_choice.core.repositories.ballot_repository import BallotRepository
-from ranked_choice.core.workflows.ballot_workflows import create_new_ballot
+from core.domain.workflows.ballot_workflows import create_new_ballot
 
 
 @api_view(['GET'])
@@ -21,7 +21,7 @@ def health_check(request):
 @permission_classes([AllowAny])
 def create_ballot(request):
     """
-    Create a new ballot with the given title and optional description.
+    Create a new ballot with the given title, optional description, and optional choices.
     """
     serializer = CreateBallotSerializer(data=request.data)
 
@@ -29,17 +29,25 @@ def create_ballot(request):
         # Get validated data
         title = serializer.validated_data['title']
         description = serializer.validated_data.get('description', None)
+        choices = serializer.validated_data.get('choices', None)
 
         try:
             # Create repository
             ballot_repository = BallotRepository()
 
             # Call workflow
-            ballot = create_new_ballot(
+            create_new_ballot(
                 ballot_repository=ballot_repository,
                 title=title,
-                description=description
+                description=description,
+                choices=choices
             )
+
+            # Since we no longer have a ballot object returned, we need to get it from the repository
+            # We can use the slug which is derived from the title
+            from django.utils.text import slugify
+            slug = slugify(title)
+            ballot = ballot_repository.get_ballot_by_slug(slug)
 
             # Return response
             return Response({

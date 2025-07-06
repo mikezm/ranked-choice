@@ -12,16 +12,17 @@ class BallotRepositoryInterface(ABC):
     """
 
     @abstractmethod
-    def create_ballot(self, title: str, description: Optional[str] = None) -> Ballot:
+    def create_ballot(self, title: str, description: Optional[str] = None, choices: Optional[List[dict]] = None) -> None:
         """
-        Create a new ballot with the given title and optional description.
+        Create a new ballot with the given title, optional description, and optional choices.
 
         Args:
             title: The title of the ballot
             description: Optional description for the ballot
+            choices: Optional list of choices, each with a name and description
 
         Returns:
-            The created Ballot object
+            None
         """
         pass
 
@@ -68,16 +69,17 @@ class BallotRepository(BallotRepositoryInterface):
     Uses Django models to interact with the database.
     """
 
-    def create_ballot(self, title: str, description: Optional[str] = None) -> Ballot:
+    def create_ballot(self, title: str, description: Optional[str] = None, choices: Optional[List[dict]] = None) -> None:
         """
-        Create a new ballot with the given title and optional description.
+        Create a new ballot with the given title, optional description, and optional choices.
 
         Args:
             title: The title of the ballot
             description: Optional description for the ballot
+            choices: Optional list of choices, each with a name and description
 
         Returns:
-            The created Ballot object
+            None
         """
         # Generate a slug from the title
         slug = slugify(title)
@@ -88,7 +90,7 @@ class BallotRepository(BallotRepositoryInterface):
             slug=slug
         )
 
-        # If description is provided, create a choice with it
+        # If description is provided, add it to the ballot
         if description:
             Choice.objects.create(
                 ballot=ballot,
@@ -96,7 +98,16 @@ class BallotRepository(BallotRepositoryInterface):
                 description=description
             )
 
-        return ballot
+        # If choices are provided, create them
+        if choices:
+            for choice in choices:
+                Choice.objects.create(
+                    ballot=ballot,
+                    name=choice['name'],
+                    description=choice.get('description', '')
+                )
+
+        # No return value
 
     def get_ballot_by_id(self, ballot_id: int) -> Optional[Ballot]:
         """

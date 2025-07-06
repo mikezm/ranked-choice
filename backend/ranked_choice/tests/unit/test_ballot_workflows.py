@@ -2,8 +2,7 @@ import unittest
 from unittest.mock import Mock
 from ranked_choice.core.models import Ballot
 from ranked_choice.core.repositories.ballot_repository import BallotRepositoryInterface
-from ranked_choice.core.workflows.ballot_workflows import create_new_ballot
-
+from core.domain.workflows.ballot_workflows import create_new_ballot
 
 
 class TestBallotWorkflows(unittest.TestCase):
@@ -23,14 +22,14 @@ class TestBallotWorkflows(unittest.TestCase):
 
         # Create a mock repository
         self.mock_repository = Mock(spec=BallotRepositoryInterface)
-        self.mock_repository.create_ballot.return_value = self.mock_ballot
+        # No return value for create_ballot as it now returns None
 
     def test_create_new_ballot_with_valid_data(self):
         """
         Test creating a new ballot with valid data.
         """
         # Call the workflow
-        ballot = create_new_ballot(
+        create_new_ballot(
             ballot_repository=self.mock_repository,
             title="Test Ballot",
             description="This is a test ballot"
@@ -38,11 +37,8 @@ class TestBallotWorkflows(unittest.TestCase):
 
         # Assert that the repository's create_ballot method was called with the correct arguments
         self.mock_repository.create_ballot.assert_called_once_with(
-            "Test Ballot", "This is a test ballot"
+            "Test Ballot", "This is a test ballot", None
         )
-
-        # Assert that the returned ballot is the mock ballot
-        self.assertEqual(ballot, self.mock_ballot)
 
     def test_create_new_ballot_with_empty_title(self):
         """
@@ -64,18 +60,38 @@ class TestBallotWorkflows(unittest.TestCase):
         Test creating a new ballot without a description.
         """
         # Call the workflow
-        ballot = create_new_ballot(
+        create_new_ballot(
             ballot_repository=self.mock_repository,
             title="Test Ballot"
         )
 
         # Assert that the repository's create_ballot method was called with the correct arguments
         self.mock_repository.create_ballot.assert_called_once_with(
-            "Test Ballot", None
+            "Test Ballot", None, None
         )
 
-        # Assert that the returned ballot is the mock ballot
-        self.assertEqual(ballot, self.mock_ballot)
+    def test_create_new_ballot_with_choices(self):
+        """
+        Test creating a new ballot with choices.
+        """
+        # Define choices
+        choices = [
+            {"name": "Option 1", "description": "Description 1"},
+            {"name": "Option 2", "description": "Description 2"}
+        ]
+
+        # Call the workflow
+        create_new_ballot(
+            ballot_repository=self.mock_repository,
+            title="Test Ballot",
+            description="This is a test ballot",
+            choices=choices
+        )
+
+        # Assert that the repository's create_ballot method was called with the correct arguments
+        self.mock_repository.create_ballot.assert_called_once_with(
+            "Test Ballot", "This is a test ballot", choices
+        )
 
 
 if __name__ == "__main__":

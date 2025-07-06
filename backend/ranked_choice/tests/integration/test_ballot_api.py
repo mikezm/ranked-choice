@@ -10,7 +10,7 @@ from rest_framework.test import APIClient
 
 from ranked_choice.core.models import Ballot, Choice
 from ranked_choice.core.repositories.ballot_repository import BallotRepository as DjangoBallotRepository
-from ranked_choice.core.tests.integration_test_case import IntegrationTestCase
+from tests.integration.integration_test_case import IntegrationTestCase
 
 
 class BallotAPITests(IntegrationTestCase):
@@ -121,6 +121,52 @@ class BallotAPITests(IntegrationTestCase):
         # Assert response
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('title', response.data)
+
+    def test_create_ballot_with_choices(self):
+        """
+        Test creating a ballot with choices.
+        """
+        # Prepare data
+        data = {
+            'title': 'Test Ballot with Choices',
+            'description': 'This is a test ballot with choices',
+            'choices': [
+                {'name': 'Option 1', 'description': 'Description 1'},
+                {'name': 'Option 2', 'description': 'Description 2'}
+            ]
+        }
+
+        # Make request
+        response = self.client.post(self.create_ballot_url, data, format='json')
+
+        # Assert response
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIn('id', response.data)
+        self.assertIn('slug', response.data)
+        self.assertIn('title', response.data)
+        self.assertIn('created_at', response.data)
+        self.assertIn('updated_at', response.data)
+        self.assertEqual(response.data['title'], 'Test Ballot with Choices')
+
+        # Assert database state
+        ballot = Ballot.objects.get(id=response.data['id'])
+        self.assertEqual(ballot.title, 'Test Ballot with Choices')
+        self.assertEqual(ballot.slug, 'test-ballot-with-choices')
+
+        # Assert that choices were created
+        choices = Choice.objects.filter(ballot=ballot).order_by('name')
+        self.assertEqual(choices.count(), 3)  # 2 choices + 1 description
+
+        # Check the description choice
+        description_choice = choices.get(name='Description')
+        self.assertEqual(description_choice.description, 'This is a test ballot with choices')
+
+        # Check the other choices
+        option1 = choices.get(name='Option 1')
+        self.assertEqual(option1.description, 'Description 1')
+
+        option2 = choices.get(name='Option 2')
+        self.assertEqual(option2.description, 'Description 2')
 
 
 if __name__ == "__main__":

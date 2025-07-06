@@ -1,14 +1,14 @@
-from typing import Optional
+from typing import Optional, List
 
-from ranked_choice.core.models import Ballot
 from ranked_choice.core.repositories.ballot_repository import BallotRepository
 
 
 def create_new_ballot(
     ballot_repository: BallotRepository,
     title: str,
-    description: Optional[str] = None
-) -> Ballot:
+    description: Optional[str] = None,
+    choices: Optional[List[dict]] = None
+) -> None:
     """
     Workflow to create a new ballot.
 
@@ -16,9 +16,10 @@ def create_new_ballot(
         ballot_repository: The repository to use for creating the ballot
         title: The title of the ballot
         description: Optional description for the ballot
+        choices: Optional list of choices, each with a name and description
 
     Returns:
-        The created Ballot object
+        None
 
     Raises:
         ValueError: If the title is empty
@@ -28,6 +29,6 @@ def create_new_ballot(
         raise ValueError("Ballot title cannot be empty")
 
     # Create the ballot using the repository
-    ballot = ballot_repository.create_ballot(title, description)
+    ballot_repository.create_ballot(title, description, choices)
 
-    return ballot
+    # No return value
