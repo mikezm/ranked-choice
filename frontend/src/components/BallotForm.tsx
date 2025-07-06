@@ -281,8 +281,9 @@ const BallotForm: React.FC<BallotFormProps> = ({ onSuccess, onCancel }) => {
         {formErrors.choices && <div className="error">{formErrors.choices}</div>}
         {formValues.choices.map((choice: Choice, index: number) => (
           <div key={index} className="choice-container">
+            <h4>Choice {index + 1}</h4>
             <div className="form-group">
-              <label htmlFor={`choices[${index}].name`}>Choice {index + 1} Name</label>
+              <label htmlFor={`choices[${index}].name`}>Name</label>
               <input
                 id={`choices[${index}].name`}
                 name={`choices[${index}].name`}
@@ -297,9 +298,7 @@ const BallotForm: React.FC<BallotFormProps> = ({ onSuccess, onCancel }) => {
             </div>
 
             <div className="form-group">
-              <label htmlFor={`choices[${index}].description`}>
-                Choice {index + 1} Description (optional)
-              </label>
+              <label htmlFor={`choices[${index}].description`}>Description (optional)</label>
               <input
                 id={`choices[${index}].description`}
                 name={`choices[${index}].description`}

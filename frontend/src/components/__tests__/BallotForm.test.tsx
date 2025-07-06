@@ -35,14 +35,21 @@ describe('BallotForm Component', () => {
 
     // Check form fields
     expect(screen.getByLabelText('Title')).toBeInTheDocument();
-    expect(screen.getByLabelText('Description (optional)')).toBeInTheDocument();
+    expect(screen.getAllByLabelText('Description (optional)')[0]).toBeInTheDocument();
     expect(screen.getByText('Choices')).toBeInTheDocument();
 
     // Check initial choices (should be 2)
-    expect(screen.getByLabelText('Choice 1 Name')).toBeInTheDocument();
-    expect(screen.getByLabelText('Choice 1 Description (optional)')).toBeInTheDocument();
-    expect(screen.getByLabelText('Choice 2 Name')).toBeInTheDocument();
-    expect(screen.getByLabelText('Choice 2 Description (optional)')).toBeInTheDocument();
+    const choiceHeadings = screen.getAllByText(/Choice \d+/);
+    console.log('Choice headings:', choiceHeadings.length);
+    expect(choiceHeadings.length).toBe(2);
+
+    const nameLabels = screen.getAllByLabelText('Name');
+    console.log('Name labels:', nameLabels.length);
+    expect(nameLabels.length).toBe(2);
+
+    const descLabels = screen.getAllByLabelText(/Description/);
+    console.log('Description labels:', descLabels.length);
+    expect(descLabels.length).toBe(3); // 2 for choices, 1 for ballot description
 
     // Check buttons
     expect(screen.getByText('Add Another Choice')).toBeInTheDocument();
@@ -69,39 +76,47 @@ describe('BallotForm Component', () => {
     render(<BallotForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
 
     // Initially there should be 2 choices
-    expect(screen.getAllByText(/Choice \d+ Name/).length).toBe(2);
+    expect(screen.getAllByText(/Choice \d+/).length).toBe(2);
 
     fireEvent.click(screen.getByText('Add Another Choice'));
 
     // Now there should be 3 choices
-    expect(screen.getAllByText(/Choice \d+ Name/).length).toBe(3);
+    expect(screen.getAllByText(/Choice \d+/).length).toBe(3);
 
     // Remove the second choice
     const removeButtons = screen.getAllByText('Remove Choice');
     fireEvent.click(removeButtons[1]);
 
     // Now there should be 2 choices again
-    expect(screen.getAllByText(/Choice \d+ Name/).length).toBe(2);
+    expect(screen.getAllByText(/Choice \d+/).length).toBe(2);
   });
 
   test('submits the form with valid data', async () => {
     render(<BallotForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
 
+    // Fill in the form fields
     fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Test Ballot' } });
-    fireEvent.change(screen.getByLabelText('Description (optional)'), {
+    fireEvent.change(screen.getAllByLabelText('Description (optional)')[0], {
       target: { value: 'Test Description' },
     });
-    fireEvent.change(screen.getByLabelText('Choice 1 Name'), { target: { value: 'Option 1' } });
-    fireEvent.change(screen.getByLabelText('Choice 1 Description (optional)'), {
-      target: { value: 'First option' },
-    });
-    fireEvent.change(screen.getByLabelText('Choice 2 Name'), { target: { value: 'Option 2' } });
+
+    // Get all name inputs and fill them
+    const nameInputs = screen.getAllByLabelText('Name');
+    fireEvent.change(nameInputs[0], { target: { value: 'Option 1' } });
+    fireEvent.change(nameInputs[1], { target: { value: 'Option 2' } });
+
+    // Get all description inputs for choices and fill the first one
+    const descInputs = screen
+      .getAllByLabelText(/Description/)
+      .filter(el => el.id.startsWith('choices'));
+    fireEvent.change(descInputs[0], { target: { value: 'First option' } });
 
     // Setup mock to simulate successful submission
     mockMutate.mockImplementation((data, options) => {
       options.onSuccess('test-slug');
     });
 
+    // Submit the form
     fireEvent.click(screen.getByText('Create Ballot'));
 
     // Check if form was submitted with correct data
@@ -127,8 +142,8 @@ describe('BallotForm Component', () => {
     render(<BallotForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
 
     fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Test Ballot' } });
-    fireEvent.change(screen.getByLabelText('Choice 1 Name'), { target: { value: 'Option 1' } });
-    fireEvent.change(screen.getByLabelText('Choice 2 Name'), { target: { value: 'Option 2' } });
+    fireEvent.change(screen.getAllByLabelText('Name')[0], { target: { value: 'Option 1' } });
+    fireEvent.change(screen.getAllByLabelText('Name')[1], { target: { value: 'Option 2' } });
 
     // Setup mock to simulate error
     mockMutate.mockImplementation((data, options) => {
