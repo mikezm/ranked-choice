@@ -56,6 +56,10 @@ This guide will walk you through the process of configuring PyCharm to run the t
      - DJANGO_SETTINGS_MODULE=ranked_choice.settings
      - PYTHONPATH=/home/mike/bin/ranked-choice/backend
    - Click "OK" to save the configuration
+3. Make sure Django isn't taking priority
+   - Go to File > Settings
+   - Navigate to Language & Frameworks > Django
+   - Check the box that says `Do not use Django Test runner`
 
 ### Running Tests with pytest
 
