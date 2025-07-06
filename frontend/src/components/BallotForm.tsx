@@ -251,7 +251,7 @@ const BallotForm: React.FC<BallotFormProps> = ({ onSuccess, onCancel }) => {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      position: 'relative' as const
+      position: 'relative' as const,
     },
     removeChoiceIcon: {
       background: '#e0e0e0',
@@ -261,8 +261,8 @@ const BallotForm: React.FC<BallotFormProps> = ({ onSuccess, onCancel }) => {
       cursor: 'pointer',
       padding: '5px',
       marginLeft: '10px',
-      borderRadius: '4px'
-    }
+      borderRadius: '4px',
+    },
   };
 
   return (
