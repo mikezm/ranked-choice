@@ -1,0 +1,111 @@
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import BallotDetail from '../BallotDetail';
+import { useGetBallot } from '../../hooks/useBallotQueries';
+
+// Mock the useBallotQueries hook
+jest.mock('../../hooks/useBallotQueries');
+
+describe('BallotDetail Component', () => {
+  const mockUseGetBallot = useGetBallot as jest.MockedFunction<typeof useGetBallot>;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('renders loading state', () => {
+    mockUseGetBallot.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      error: null,
+      isError: false,
+    } as any);
+
+    render(
+      <MemoryRouter initialEntries={['/ballot/test-slug']}>
+        <Routes>
+          <Route path="/ballot/:slug" element={<BallotDetail />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Loading ballot...')).toBeInTheDocument();
+  });
+
+  test('renders error state', () => {
+    mockUseGetBallot.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: new Error('Failed to fetch'),
+      isError: true,
+    } as any);
+
+    render(
+      <MemoryRouter initialEntries={['/ballot/test-slug']}>
+        <Routes>
+          <Route path="/ballot/:slug" element={<BallotDetail />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Error')).toBeInTheDocument();
+    expect(screen.getByText('Failed to load ballot. It may not exist or there was a server error.')).toBeInTheDocument();
+    expect(screen.getByText('Return to Home')).toBeInTheDocument();
+  });
+
+  test('renders not found state when data is null', () => {
+    mockUseGetBallot.mockReturnValue({
+      data: null,
+      isLoading: false,
+      error: null,
+      isError: false,
+    } as any);
+
+    render(
+      <MemoryRouter initialEntries={['/ballot/test-slug']}>
+        <Routes>
+          <Route path="/ballot/:slug" element={<BallotDetail />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Ballot Not Found')).toBeInTheDocument();
+    expect(screen.getByText('The ballot you\'re looking for doesn\'t exist.')).toBeInTheDocument();
+  });
+
+  test('renders ballot details when data is available', () => {
+    const mockBallot = {
+      title: 'Test Ballot',
+      description: 'This is a test ballot',
+      choices: [
+        { name: 'Option 1', description: 'First option' },
+        { name: 'Option 2', description: '' },
+      ],
+    };
+
+    mockUseGetBallot.mockReturnValue({
+      data: mockBallot,
+      isLoading: false,
+      error: null,
+      isError: false,
+    } as any);
+
+    render(
+      <MemoryRouter initialEntries={['/ballot/test-slug']}>
+        <Routes>
+          <Route path="/ballot/:slug" element={<BallotDetail />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Test Ballot')).toBeInTheDocument();
+    expect(screen.getByText('This is a test ballot')).toBeInTheDocument();
+    expect(screen.getByText('Choices')).toBeInTheDocument();
+    expect(screen.getByText('Option 1')).toBeInTheDocument();
+    expect(screen.getByText('First option')).toBeInTheDocument();
+    expect(screen.getByText('Option 2')).toBeInTheDocument();
+    expect(screen.getByText('Back to Home')).toBeInTheDocument();
+  });
+});
