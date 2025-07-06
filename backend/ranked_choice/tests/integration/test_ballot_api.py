@@ -54,11 +54,7 @@ class BallotAPITests(IntegrationTestCase):
 
         # Assert that choices were created
         choices = Choice.objects.filter(ballot=ballot).order_by('name')
-        self.assertEqual(choices.count(), 2)  # 1 choice + 1 description
-
-        # Check the description choice
-        description_choice = choices.get(name='Description')
-        self.assertEqual(description_choice.description, 'This is a test ballot')
+        self.assertEqual(choices.count(), 1)  # 1 choice + 1 description
 
         # Check the other choice
         option1 = choices.get(name='Option 1')
@@ -159,11 +155,7 @@ class BallotAPITests(IntegrationTestCase):
 
         # Assert that choices were created
         choices = Choice.objects.filter(ballot=ballot).order_by('name')
-        self.assertEqual(choices.count(), 3)  # 2 choices + 1 description
-
-        # Check the description choice
-        description_choice = choices.get(name='Description')
-        self.assertEqual(description_choice.description, 'This is a test ballot with choices')
+        self.assertEqual(choices.count(), 2)
 
         # Check the other choices
         option1 = choices.get(name='Option 1')

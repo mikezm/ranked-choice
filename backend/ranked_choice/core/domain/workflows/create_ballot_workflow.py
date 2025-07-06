@@ -38,7 +38,7 @@ def create_ballot_workflow(
     slug = slugify(title)
 
     # Create the ballot using the repository
-    repository.create_ballot(title, description, choices)
+    repository.create_ballot(title, choices, description)
 
     # Return the slug
     return slug

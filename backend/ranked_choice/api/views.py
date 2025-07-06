@@ -20,7 +20,7 @@ def health_check(request):
 @permission_classes([AllowAny])
 def create_ballot(request):
     """
-    Create a new ballot with the given title, optional description, and optional choices.
+    Create a new ballot with the given title, choices, and optional description.
     """
     serializer = CreateBallotSerializer(data=request.data)
 

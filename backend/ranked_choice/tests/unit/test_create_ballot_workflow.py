@@ -19,6 +19,7 @@ class TestCreateBallotWorkflow(unittest.TestCase):
         self.mock_ballot.id = 1
         self.mock_ballot.slug = "test-ballot"
         self.mock_ballot.title = "Test Ballot"
+        self.mock_ballot.description = "This is a test ballot"
 
         # Create a mock repository
         self.mock_repository = Mock(spec=BallotRepositoryInterface)
@@ -43,7 +44,7 @@ class TestCreateBallotWorkflow(unittest.TestCase):
 
         # Assert that the repository's create_ballot method was called with the correct arguments
         self.mock_repository.create_ballot.assert_called_once_with(
-            "Test Ballot", "This is a test ballot", choices
+            "Test Ballot", choices, "This is a test ballot"
         )
 
         # Assert that the correct slug is returned
@@ -88,7 +89,7 @@ class TestCreateBallotWorkflow(unittest.TestCase):
 
         # Assert that the repository's create_ballot method was called with the correct arguments
         self.mock_repository.create_ballot.assert_called_once_with(
-            "Test Ballot", None, choices
+            "Test Ballot", choices, None
         )
 
         # Assert that the correct slug is returned
@@ -114,7 +115,7 @@ class TestCreateBallotWorkflow(unittest.TestCase):
 
         # Assert that the repository's create_ballot method was called with the correct arguments
         self.mock_repository.create_ballot.assert_called_once_with(
-            "Test Ballot", "This is a test ballot", choices
+            "Test Ballot", choices, "This is a test ballot"
         )
 
         # Assert that the correct slug is returned

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List
 
-from ranked_choice.core.models import Ballot
+from ranked_choice.core.domain.items.ballot_item import BallotItem
 
 
 class BallotRepositoryInterface(ABC):
@@ -11,14 +11,14 @@ class BallotRepositoryInterface(ABC):
     """
 
     @abstractmethod
-    def create_ballot(self, title: str, description: Optional[str] = None, choices: Optional[List[dict]] = None) -> None:
+    def create_ballot(self, title: str, choices: List[dict], description: Optional[str] = None) -> None:
         """
-        Create a new ballot with the given title, optional description, and optional choices.
+        Create a new ballot with the given title, choices, and optional description.
 
         Args:
             title: The title of the ballot
+            choices: List of choices, each with a name and description
             description: Optional description for the ballot
-            choices: Optional list of choices, each with a name and description
 
         Returns:
             None
@@ -26,20 +26,7 @@ class BallotRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    def get_ballot_by_id(self, ballot_id: int) -> Optional[Ballot]:
-        """
-        Get a ballot by its ID.
-
-        Args:
-            ballot_id: The ID of the ballot to retrieve
-
-        Returns:
-            The Ballot object if found, None otherwise
-        """
-        pass
-
-    @abstractmethod
-    def get_ballot_by_slug(self, slug: str) -> Optional[Ballot]:
+    def get_ballot_by_slug(self, slug: str) -> Optional[BallotItem]:
         """
         Get a ballot by its slug.
 
@@ -47,16 +34,16 @@ class BallotRepositoryInterface(ABC):
             slug: The slug of the ballot to retrieve
 
         Returns:
-            The Ballot object if found, None otherwise
+            The BallotItem object if found, None otherwise
         """
         pass
 
     @abstractmethod
-    def list_ballots(self) -> List[Ballot]:
+    def list_ballots(self) -> List[BallotItem]:
         """
         List all ballots.
 
         Returns:
-            A list of all Ballot objects
+            A list of all BallotItem objects
         """
         pass
