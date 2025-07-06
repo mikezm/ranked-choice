@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import Mock
 from ranked_choice.core.models import Ballot
 from ranked_choice.core.repositories.ballot_repository import BallotRepositoryInterface
-from core.domain.workflows.ballot_workflows import create_new_ballot
+from core.domain.workflows.create_ballot_workflow import create_ballot_workflow
 
 
 class TestBallotWorkflows(unittest.TestCase):
@@ -29,7 +29,7 @@ class TestBallotWorkflows(unittest.TestCase):
         Test creating a new ballot with valid data.
         """
         # Call the workflow
-        create_new_ballot(
+        create_ballot_workflow(
             ballot_repository=self.mock_repository,
             title="Test Ballot",
             description="This is a test ballot"
@@ -46,7 +46,7 @@ class TestBallotWorkflows(unittest.TestCase):
         """
         # Assert that calling the workflow with an empty title raises a ValueError
         with self.assertRaises(ValueError):
-            create_new_ballot(
+            create_ballot_workflow(
                 ballot_repository=self.mock_repository,
                 title="",
                 description="This is a test ballot"
@@ -60,7 +60,7 @@ class TestBallotWorkflows(unittest.TestCase):
         Test creating a new ballot without a description.
         """
         # Call the workflow
-        create_new_ballot(
+        create_ballot_workflow(
             ballot_repository=self.mock_repository,
             title="Test Ballot"
         )
@@ -81,7 +81,7 @@ class TestBallotWorkflows(unittest.TestCase):
         ]
 
         # Call the workflow
-        create_new_ballot(
+        create_ballot_workflow(
             ballot_repository=self.mock_repository,
             title="Test Ballot",
             description="This is a test ballot",

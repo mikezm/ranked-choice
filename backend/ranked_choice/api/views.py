@@ -5,7 +5,7 @@ from rest_framework import status
 
 from ranked_choice.api.serializers import CreateBallotSerializer
 from ranked_choice.core.repositories.ballot_repository import BallotRepository
-from core.domain.workflows.ballot_workflows import create_new_ballot
+from core.domain.workflows.create_ballot_workflow import create_ballot_workflow
 
 
 @api_view(['GET'])
@@ -36,7 +36,7 @@ def create_ballot(request):
             ballot_repository = BallotRepository()
 
             # Call workflow
-            create_new_ballot(
+            create_ballot_workflow(
                 ballot_repository=ballot_repository,
                 title=title,
                 description=description,

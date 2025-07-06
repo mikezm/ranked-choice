@@ -3,7 +3,7 @@ from typing import Optional, List
 from ranked_choice.core.repositories.ballot_repository import BallotRepository
 
 
-def create_new_ballot(
+def create_ballot_workflow(
     ballot_repository: BallotRepository,
     title: str,
     description: Optional[str] = None,
