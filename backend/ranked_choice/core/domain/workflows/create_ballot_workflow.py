@@ -1,5 +1,9 @@
-from typing import Optional, List
-from ranked_choice.core.repositories.ballot_repository import BallotRepository, BallotRepositoryInterface
+from typing import List, Optional
+
+from ranked_choice.core.repositories.ballot_repository import (
+    BallotRepository,
+    BallotRepositoryInterface,
+)
 
 
 def create_ballot_workflow(

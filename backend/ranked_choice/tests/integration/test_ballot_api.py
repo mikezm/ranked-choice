@@ -1,16 +1,20 @@
 import os
 import unittest
 
-# Add 'testserver' to ALLOWED_HOSTS for testing
-os.environ['ALLOWED_HOSTS'] = 'localhost,127.0.0.1,testserver'
-
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
 from ranked_choice.core.models import Ballot, Choice
-from ranked_choice.core.repositories.ballot_repository import BallotRepository as DjangoBallotRepository
+from ranked_choice.core.repositories.ballot_repository import (
+    BallotRepository as DjangoBallotRepository,
+)
 from ranked_choice.tests.integration.integration_test_case import IntegrationTestCase
+
+# Add 'testserver' to ALLOWED_HOSTS for testing
+os.environ['ALLOWED_HOSTS'] = 'localhost,127.0.0.1,testserver'
+
+
 
 
 class BallotAPITests(IntegrationTestCase):

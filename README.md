@@ -71,6 +71,42 @@ ranked-choice/
 - Pages are in `frontend/src/pages/`
 - API services are in `frontend/src/services/`
 
+### Linting
+
+The project uses [Ruff](https://github.com/astral-sh/ruff) for Python linting.
+
+To run the linter locally:
+```bash
+make lint
+```
+
+To automatically fix linting issues:
+```bash
+make lint-fix
+```
+
+The project also includes a GitHub Actions workflow that automatically runs the linter on all pull requests and pushes to the main branch.
+
+#### Configuring PyCharm for Ruff
+
+To configure PyCharm to use Ruff for linting on save:
+
+1. Install the Ruff plugin:
+   - Go to Settings/Preferences → Plugins
+   - Search for "Ruff" and install the plugin
+   - Restart PyCharm
+
+2. Configure the Ruff plugin:
+   - Go to Settings/Preferences → Tools → Ruff
+   - Check "Run on save"
+   - Set the path to the Ruff executable (usually in your virtual environment)
+   - Click "Apply" and "OK"
+
+3. Verify the configuration:
+   - Open a Python file
+   - Make a change that would trigger a linting error
+   - Save the file and verify that Ruff highlights the issue
+
 ## Deployment
 
 For production deployment:

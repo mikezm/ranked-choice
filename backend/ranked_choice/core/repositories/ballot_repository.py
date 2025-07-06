@@ -1,8 +1,12 @@
-from typing import Optional, List
+from typing import List, Optional
+
 from django.utils.text import slugify
-from ranked_choice.core.repositories.ballot_repository_interface import BallotRepositoryInterface
-from ranked_choice.core.models import Ballot, Choice
+
 from ranked_choice.core.domain.items.ballot_item import BallotItem, ChoiceItem
+from ranked_choice.core.models import Ballot, Choice
+from ranked_choice.core.repositories.ballot_repository_interface import (
+    BallotRepositoryInterface,
+)
 
 
 def build_choices(ballot) -> List[ChoiceItem]:
@@ -23,7 +27,12 @@ class BallotRepository(BallotRepositoryInterface):
     Uses Django models to interact with the database.
     """
 
-    def create_ballot(self, title: str, choices: List[dict], description: Optional[str] = None) -> str:
+    def create_ballot(
+            self,
+            title: str,
+            choices: List[dict],
+            description: Optional[str] = None
+    ) -> str:
         """
         Create a new ballot with the given title, choices, and optional description.
 

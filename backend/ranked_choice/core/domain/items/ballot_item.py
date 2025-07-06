@@ -19,7 +19,7 @@ class BallotItem:
     title: str
     slug: str
     description: Optional[str] = None
-    choices: List[ChoiceItem] = None  # None as default, will be initialized in __post_init__
+    choices: List[ChoiceItem] = None
 
     def __post_init__(self):
         if self.choices is None:

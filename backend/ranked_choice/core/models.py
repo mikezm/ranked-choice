@@ -4,7 +4,8 @@ from django.db import models
 class Ballot(models.Model):
     """
     Ballot model for storing ballot information.
-    Uses an auto-incrementing integer primary key, timestamps, and includes slug and title fields.
+    Uses an auto-incrementing integer primary key,
+    timestamps, and includes slug and title fields.
     """
     id = models.AutoField(primary_key=True)
     slug = models.SlugField(unique=True)
