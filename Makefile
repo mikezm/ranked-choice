@@ -1,4 +1,7 @@
-.PHONY: start build makemigration migrate lint lint-fix
+.PHONY: start build makemigration migrate lint lint-fix test lint-ui test-ui
+
+BACKEND_CMD=docker compose exec backend
+FRONTEND_CMD=docker compose exec frontend
 
 # Start all services
 start:
@@ -10,16 +13,25 @@ build:
 
 # Make migrations for Django backend
 migration:
-	docker compose exec backend python manage.py makemigrations
+	$(BACKEND_CMD) python manage.py makemigrations
 
 # Apply migrations to the database
 migrate:
-	docker compose exec backend python manage.py migrate
+	$(BACKEND_CMD) python manage.py migrate
 
 # Run Ruff linter on backend code
 lint:
-	docker compose exec backend ruff check .
+	$(BACKEND_CMD) ruff check .
 
 # Run Ruff linter with automatic fixes on backend code
 lint-fix:
-	docker compose exec backend ruff check --fix .
+	$(BACKEND_CMD) ruff check --fix .
+
+test:
+	$(BACKEND_CMD) pytest ranked_choice --ds=ranked_choice.settings -v
+
+lint-ui:
+	$(FRONTEND_CMD) npm run lint-fix && $(FRONTEND_CMD) npm run format
+
+test-ui:
+	$(FRONTEND_CMD) npm run test
