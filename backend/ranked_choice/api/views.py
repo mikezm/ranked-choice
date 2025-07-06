@@ -5,7 +5,7 @@ from rest_framework import status
 
 from ranked_choice.api.serializers import CreateBallotSerializer
 from ranked_choice.core.repositories.ballot_repository import BallotRepository
-from core.domain.workflows.create_ballot_workflow import create_ballot_workflow
+from ranked_choice.core.domain.workflows.create_ballot_workflow import create_ballot_workflow
 
 
 @api_view(['GET'])
