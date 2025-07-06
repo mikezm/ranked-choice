@@ -24,3 +24,21 @@ class CreateBallotSerializer(serializers.Serializer):
         if not value:
             raise serializers.ValidationError("At least one choice must be provided.")
         return value
+
+
+class BallotChoiceSerializer(serializers.Serializer):
+    """
+    Serializer for ballot choices in the response.
+    """
+    name = serializers.CharField()
+    description = serializers.CharField(allow_null=True)
+
+
+class BallotDetailSerializer(serializers.Serializer):
+    """
+    Serializer for ballot details in the response.
+    """
+    title = serializers.CharField()
+    slug = serializers.CharField()
+    description = serializers.CharField(allow_null=True)
+    choices = BallotChoiceSerializer(many=True)

@@ -11,13 +11,10 @@ from ranked_choice.core.repositories.ballot_repository import (
 )
 from ranked_choice.tests.integration.integration_test_case import IntegrationTestCase
 
-# Add 'testserver' to ALLOWED_HOSTS for testing
 os.environ['ALLOWED_HOSTS'] = 'localhost,127.0.0.1,testserver'
 
 
-
-
-class BallotAPITests(IntegrationTestCase):
+class CreateBallotAPITests(IntegrationTestCase):
     """
     Tests for the ballot API endpoints.
     """
