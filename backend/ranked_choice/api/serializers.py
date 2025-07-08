@@ -42,3 +42,23 @@ class BallotDetailSerializer(serializers.Serializer):
     slug = serializers.CharField()
     description = serializers.CharField(allow_null=True)
     choices = BallotChoiceSerializer(many=True)
+
+
+class VoteSerializer(serializers.Serializer):
+    rank = serializers.IntegerField()
+    choice_id = serializers.IntegerField()
+
+
+class CreateVoterSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=255)
+    ballot_id = serializers.IntegerField()
+    votes = VoteSerializer(many=True, required=True)
+
+    def validate_votes(self, value):
+        """
+        Check that the votes list is not empty.
+        """
+        if not value:
+            raise serializers.ValidationError("At least one vote must be provided.")
+        return value
+

@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List, Optional
 
 from ranked_choice.core.domain.items.ballot_item import BallotItem
+from ranked_choice.core.domain.items.voter_item import VoterItem
 
 
 class BallotRepositoryInterface(ABC):
@@ -50,5 +51,37 @@ class BallotRepositoryInterface(ABC):
 
         Returns:
             A list of all BallotItem objects
+        """
+        pass
+
+    @abstractmethod
+    def create_voter(
+            self,
+            name: str,
+            ballot_id: int,
+            votes: List[dict]
+    ) -> None:
+        """
+        Create a new voter
+
+        Returns:
+            None
+            :param votes:
+            :param ballot_id:
+            :param name:
+        """
+        pass
+
+    @abstractmethod
+    def get_votes_by_ballot_id(self, ballot_id: int) -> List[VoterItem]:
+        """
+        Get votes by ballot id.
+
+        Args:
+            slug: The slug of the ballot to retrieve
+
+        Returns:
+            The BallotItem object if found, None otherwise
+            :param ballot_id:
         """
         pass

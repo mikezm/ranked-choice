@@ -7,6 +7,7 @@ class ChoiceItem:
     """
     Domain item representing a ballot choice.
     """
+    id: int
     name: str
     description: Optional[str] = None
 
@@ -16,6 +17,7 @@ class BallotItem:
     """
     Domain item representing a ballot.
     """
+    id: int
     title: str
     slug: str
     description: Optional[str] = None

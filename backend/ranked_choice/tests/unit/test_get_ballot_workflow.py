@@ -22,10 +22,12 @@ class TestGetBallotWorkflow(unittest.TestCase):
         title = self.fake.sentence(nb_words=3)
         slug = slugify(title)
         choice_item = ChoiceItem(
+            id=self.fake.pyint(),
             name=self.fake.word(),
             description=self.fake.sentence()
         )
         ballot_item = BallotItem(
+            id=self.fake.pyint(),
             title=title,
             slug=slug,
             description=self.fake.sentence(),
