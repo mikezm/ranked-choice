@@ -4,7 +4,8 @@ from typing import List, Optional
 from django.utils.text import slugify
 
 from ranked_choice.core.domain.items.ballot_item import BallotItem, ChoiceItem
-from ranked_choice.core.models import Ballot, Choice
+from ranked_choice.core.domain.items.voter_item import VoteItem, VoterItem
+from ranked_choice.core.models import Ballot, Choice, Vote, Voter
 from ranked_choice.core.repositories.ballot_repository_interface import (
     BallotRepositoryInterface,
 )
@@ -15,6 +16,7 @@ def build_choices(ballot) -> List[ChoiceItem]:
     choice_items = []
     for choice in choices:
         choice_items.append(ChoiceItem(
+            id=choice.id,
             name=choice.name,
             description=choice.description
         ))
@@ -79,6 +81,7 @@ class BallotRepository(BallotRepositoryInterface):
             choice_items = build_choices(ballot)
 
             return BallotItem(
+                id=ballot.id,
                 title=ballot.title,
                 slug=ballot.slug,
                 description=ballot.description,
@@ -100,6 +103,7 @@ class BallotRepository(BallotRepositoryInterface):
         for ballot in ballots:
             choice_items = build_choices(ballot)
             ballot_items.append(BallotItem(
+                id=ballot.id,
                 title=ballot.title,
                 slug=ballot.slug,
                 description=ballot.description,
@@ -107,3 +111,42 @@ class BallotRepository(BallotRepositoryInterface):
             ))
 
         return ballot_items
+
+    def create_voter(
+            self,
+            name: str,
+            ballot_id: int,
+            votes: List[dict]
+    ) -> None:
+        voter = Voter.objects.create(
+            name=name,
+            ballot_id=ballot_id,
+        )
+        for vote in votes:
+            Vote.objects.create(
+                voter=voter,
+                rank=vote['rank'],
+                choice_id=vote['choice_id']
+            )
+
+
+    def get_votes_by_ballot_id(self, ballot_id: int) -> List[VoterItem]:
+        voter_items = []
+        voters = Voter.objects.filter(ballot_id=ballot_id)
+        for voter in voters:
+            votes = Vote.objects.filter(voter_id=voter.id)
+            vote_items = []
+            for vote in votes:
+                vote_items.append(VoteItem(
+                    rank=vote.rank,
+                    choice_id=vote.choice_id
+                ))
+
+            voter_items.append(VoterItem(
+                name=voter.name,
+                ballot_id=ballot_id,
+                votes=vote_items
+            ))
+
+        return voter_items
+

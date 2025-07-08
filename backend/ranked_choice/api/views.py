@@ -3,9 +3,16 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from ranked_choice.api.serializers import BallotDetailSerializer, CreateBallotSerializer
+from ranked_choice.api.serializers import (
+    BallotDetailSerializer,
+    CreateBallotSerializer,
+    CreateVoterSerializer,
+)
 from ranked_choice.core.domain.workflows.create_ballot_workflow import (
     create_ballot_workflow,
+)
+from ranked_choice.core.domain.workflows.create_vote_workflow import (
+    create_vote_workflow,
 )
 from ranked_choice.core.domain.workflows.get_ballot_workflow import get_ballot_workflow
 
@@ -83,6 +90,34 @@ def get_ballot(request, slug):
             {"error": str(e)},
             status=status.HTTP_400_BAD_REQUEST
         )
+    except Exception:
+        return Response(
+            {"error": "Internal server error"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def create_vote(request):
+    """
+    Create a new ballot with the given title, choices, and optional description.
+    """
+    serializer = CreateVoterSerializer(data=request.data)
+
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    name = serializer.validated_data['name']
+    ballot_id = serializer.validated_data['ballot_id']
+    votes = serializer.validated_data['votes']
+
+    try:
+        create_vote_workflow(name=name, ballot_id=ballot_id, votes=votes)
+        return Response({"status": "success"}, status=status.HTTP_201_CREATED)
+
+    except ValueError as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception:
         return Response(
             {"error": "Internal server error"},

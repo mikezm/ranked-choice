@@ -45,3 +45,51 @@ class Choice(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Voter(models.Model):
+    """
+    Voter model for storing voter information.
+    """
+    id = models.AutoField(primary_key=True)
+    ballot = models.ForeignKey(
+        Ballot,
+        on_delete=models.CASCADE,
+        related_name='voters'
+    )
+    name = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        app_label = 'core'
+        db_table = 'voters'
+
+    def __str__(self):
+        return self.name
+
+
+class Vote(models.Model):
+    """
+    Votes model for storing votes.
+    """
+    id = models.AutoField(primary_key=True)
+    voter = models.ForeignKey(
+        Voter,
+        on_delete=models.CASCADE,
+        related_name='votes'
+    )
+    rank = models.PositiveIntegerField()
+    choice = models.ForeignKey(
+        Choice,
+        on_delete=models.CASCADE,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        app_label = 'core'
+        db_table = 'votes'
+
+    def __str__(self):
+        return f"Vote for {self.choice.name} by {self.voter.name}"

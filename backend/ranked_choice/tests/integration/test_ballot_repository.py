@@ -2,7 +2,7 @@ from ranked_choice.core.repositories.ballot_repository import BallotRepository
 from ranked_choice.tests.integration.integration_test_case import IntegrationTestCase
 
 
-class TestDjangoBallotRepository(IntegrationTestCase):
+class TestBallotRepository(IntegrationTestCase):
     """
     Integration tests for the Django ballot repository.
     """
@@ -148,3 +148,34 @@ class TestDjangoBallotRepository(IntegrationTestCase):
         self.assertIsNotNone(option2)
         self.assertEqual(option1.description, "Description 1")
         self.assertEqual(option2.description, "Description 2")
+
+    def test_create_voter_with_votes(self):
+        choices = [
+            {"name": "Option 1", "description": "Description 1"},
+            {"name": "Option 2", "description": "Description 2"}
+        ]
+
+        slug = self.repository.create_ballot(
+            title="Test Ballot",
+            choices=choices,
+            description="This is a test ballot"
+        )
+
+        ballot_item = self.repository.get_ballot_by_slug(slug)
+
+        voter = "voter name"
+        votes = [{
+            "rank": index,
+            "choice_id": choice.id
+        } for index, choice in enumerate(ballot_item.choices)]
+
+        self.repository.create_voter(name=voter, ballot_id=ballot_item.id, votes=votes)
+        vote_items = self.repository.get_votes_by_ballot_id(ballot_id=ballot_item.id)
+
+        self.assertEqual(len(vote_items), 1)
+        self.assertEqual(len(vote_items[0].votes), 2)
+        self.assertEqual(vote_items[0].name, voter)
+        self.assertEqual(vote_items[0].votes[0].rank, 0)
+        self.assertEqual(vote_items[0].votes[0].choice_id, ballot_item.choices[0].id)
+        self.assertEqual(vote_items[0].votes[1].rank, 1)
+        self.assertEqual(vote_items[0].votes[1].choice_id, ballot_item.choices[1].id)
