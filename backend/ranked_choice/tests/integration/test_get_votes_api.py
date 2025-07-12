@@ -27,11 +27,7 @@ class GetVotesAPITests(IntegrationTestCase):
                 {'name': 'Option 3', 'description': 'Description 3'},
             ]
         )
-
-        # Get the ballot to access its ID and choices
         ballot_item = self.repository.get_ballot_by_slug(slug)
-
-        # Create votes for the ballot
         self.repository.create_voter(
             name='Voter 1',
             ballot_id=ballot_item.id,
@@ -52,35 +48,24 @@ class GetVotesAPITests(IntegrationTestCase):
             ]
         )
 
-        # Call the API endpoint
         url = reverse('api:get_votes', kwargs={'slug': slug})
         response = self.client.get(url)
 
-        # Verify the response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # Check that the response contains the expected fields
         self.assertIn('winner_id', response.data)
         self.assertIn('winner_name', response.data)
         self.assertIn('title', response.data)
         self.assertIn('rounds', response.data)
-
-        # Verify the winner is Option 1 (which received all first-place votes)
         self.assertEqual(response.data['winner_name'], 'Option 1')
         self.assertEqual(response.data['title'], 'Test Ballot for Votes')
 
-        # Verify rounds data exists
         self.assertTrue(len(response.data['rounds']) > 0)
 
     def test_get_votes_with_invalid_slug(self):
-        # Call the API endpoint with a non-existent slug
         url = reverse('api:get_votes', kwargs={'slug': self.fake_ballot_slug})
         response = self.client.get(url)
 
-        # Verify the response is a 200 OK (the workflow returns a default BallotResultItem)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # Check that the response indicates no ballot was found
         self.assertEqual(response.data['winner_id'], -1)
         self.assertEqual(response.data['winner_name'], 'No ballot found')
         self.assertEqual(response.data['title'], '')
