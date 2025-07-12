@@ -15,7 +15,9 @@ from ranked_choice.core.domain.workflows.create_vote_workflow import (
     create_vote_workflow,
 )
 from ranked_choice.core.domain.workflows.get_ballot_workflow import get_ballot_workflow
-from ranked_choice.core.domain.workflows.list_ballots_workflow import list_ballots_workflow
+from ranked_choice.core.domain.workflows.list_ballots_workflow import (
+    list_ballots_workflow,
+)
 
 
 @api_view(['GET'])
