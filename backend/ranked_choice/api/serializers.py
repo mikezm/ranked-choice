@@ -1,6 +1,25 @@
 from rest_framework import serializers
 
 
+class RoundItemSerializer(serializers.Serializer):
+    """
+    Serializer for round items in the ballot result.
+    """
+    name = serializers.CharField()
+    votes = serializers.IntegerField()
+    round_index = serializers.IntegerField()
+
+
+class BallotResultSerializer(serializers.Serializer):
+    """
+    Serializer for ballot results in the response.
+    """
+    winner_id = serializers.IntegerField()
+    winner_name = serializers.CharField()
+    title = serializers.CharField()
+    rounds = RoundItemSerializer(many=True)
+
+
 class ChoiceSerializer(serializers.Serializer):
     """
     Serializer for ballot choices.
@@ -62,4 +81,4 @@ class CreateVoterSerializer(serializers.Serializer):
         """
         if not value:
             raise serializers.ValidationError("At least one vote must be provided.")
-        return value
+        return value   

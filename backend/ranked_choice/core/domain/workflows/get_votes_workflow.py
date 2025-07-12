@@ -3,6 +3,7 @@ from typing import Dict, List, Optional
 
 from ranked_choice.core.domain.items.ballot_item import BallotResultItem, RoundItem
 from ranked_choice.core.domain.items.voter_item import VoterItem
+from ranked_choice.core.repositories.ballot_repository import BallotRepository
 from ranked_choice.core.repositories.ballot_repository_interface import (
     BallotRepositoryInterface,
 )
@@ -24,15 +25,24 @@ def get_votes_workflow(
     slug: str,
     ballot_repository: Optional[BallotRepositoryInterface] = None
 ) -> BallotResultItem:
+    ballot_repository = ballot_repository or BallotRepository()
     ballot = ballot_repository.get_ballot_by_slug(slug=slug)
     if not ballot:
-        return BallotResultItem(winner_id=-1, winner_name="No ballot found", rounds=[])
+        return BallotResultItem(
+            winner_id=-1,
+            winner_name="No ballot found",
+            rounds=[],
+            title=""
+        )
 
     voter_items = ballot_repository.get_votes_by_ballot_id(ballot_id=ballot.id)
 
     choice_name_map = {choice.id: choice.name for choice in ballot.choices}
 
-    return calculate_ranked_choice_winner(voter_items, choice_name_map)
+    result = calculate_ranked_choice_winner(voter_items, choice_name_map)
+    result.title = ballot.title
+
+    return result
 
 
 def calculate_ranked_choice_winner(
@@ -40,7 +50,12 @@ def calculate_ranked_choice_winner(
         choice_name_map: Dict[int, str]
 ) -> BallotResultItem:
     if not voter_items:
-        return BallotResultItem(winner_id=-1, winner_name="No votes found", rounds=[])
+        return BallotResultItem(
+            winner_id=-1,
+            winner_name="No votes found",
+            rounds=[],
+            title=""
+        )
 
     rounds = []
     all_choices = set()
@@ -81,7 +96,8 @@ def calculate_ranked_choice_winner(
             return BallotResultItem(
                 winner_id=winner_id,
                 winner_name=choice_name_map.get(winner_id, "Unknown"),
-                rounds=map_rounds_to_round_items(rounds, choice_name_map)
+                rounds=map_rounds_to_round_items(rounds, choice_name_map),
+                title=""
             )
 
         min_votes = min(vote_counts.values())
@@ -96,7 +112,8 @@ def calculate_ranked_choice_winner(
             return BallotResultItem(
                 winner_id=winner_id,
                 winner_name=choice_name_map.get(winner_id, "Unknown"),
-                rounds=map_rounds_to_round_items(rounds, choice_name_map)
+                rounds=map_rounds_to_round_items(rounds, choice_name_map),
+                title=""
             )
 
         loser = losers[0]
@@ -116,11 +133,13 @@ def calculate_ranked_choice_winner(
             return BallotResultItem(
                 winner_id=winner_id,
                 winner_name=choice_name_map.get(winner_id, "Unknown"),
-                rounds=map_rounds_to_round_items(rounds, choice_name_map)
+                rounds=map_rounds_to_round_items(rounds, choice_name_map),
+                title=""
             )
 
     return BallotResultItem(
         winner_id=-1,
         winner_name="No winner",
-        rounds=map_rounds_to_round_items(rounds, choice_name_map)
+        rounds=map_rounds_to_round_items(rounds, choice_name_map),
+        title=""
     )

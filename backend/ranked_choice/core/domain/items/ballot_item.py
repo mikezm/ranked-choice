@@ -14,6 +14,7 @@ class BallotResultItem:
     winner_id: int
     winner_name: str
     rounds: List[RoundItem]
+    title: str = ""
 
 
 @dataclass

@@ -9,5 +9,6 @@ urlpatterns = [
     path('ballots/', views.create_ballot, name='create_ballot'),
     path('ballots/all/', views.list_ballots, name='list_ballots'),
     path('ballots/<slug:slug>/', views.get_ballot, name='get_ballot'),
+    path('ballots/results/<slug:slug>/', views.get_votes, name='get_votes'),
     path('vote/', views.create_vote, name='create_vote'),
 ]

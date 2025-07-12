@@ -5,6 +5,7 @@ from rest_framework.response import Response
 
 from ranked_choice.api.serializers import (
     BallotDetailSerializer,
+    BallotResultSerializer,
     CreateBallotSerializer,
     CreateVoterSerializer,
 )
@@ -15,6 +16,7 @@ from ranked_choice.core.domain.workflows.create_vote_workflow import (
     create_vote_workflow,
 )
 from ranked_choice.core.domain.workflows.get_ballot_workflow import get_ballot_workflow
+from ranked_choice.core.domain.workflows.get_votes_workflow import get_votes_workflow
 from ranked_choice.core.domain.workflows.list_ballots_workflow import (
     list_ballots_workflow,
 )
@@ -153,5 +155,42 @@ def list_ballots(request):
     except Exception:
         return Response(
             {"error": "Internal server error"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_votes(request, slug):
+    """
+        Retrieve votes for a ballot
+
+        Args:
+            request: The HTTP request object
+            slug: The unique identifier for the ballot
+
+        Returns:
+            Response with serialized ballot data or the appropriate error message
+        """
+    try:
+        results = get_votes_workflow(slug=slug)
+
+        if results is None:
+            return Response(
+                {"error": "Ballot not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = BallotResultSerializer(results)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    except ValueError as e:
+        return Response(
+            {"error": str(e)},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    except Exception as e:
+        return Response(
+            {"error": "Internal server error", "error_details": str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
