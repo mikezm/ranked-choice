@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import BallotForm from '../components/BallotForm';
 import BallotCreated from '../components/BallotCreated';
+import ListBallots from '../components/ListBallots';
 
 enum HomeState {
   INITIAL,
@@ -34,13 +35,18 @@ const Home: React.FC = () => {
       <h1>Ranked Choice Voting App</h1>
 
       {state === HomeState.INITIAL && (
-        <div className="welcome-section">
-          <p>Welcome to the Ranked Choice Voting application!</p>
-          <p>Create a new ballot to start collecting votes on your choices.</p>
-          <button className="create-ballot-btn" onClick={handleCreateBallot}>
-            Create New Ballot
-          </button>
-        </div>
+        <>
+          <div className="welcome-section">
+            <p>Welcome to the Ranked Choice Voting application!</p>
+            <p>Create a new ballot to start collecting votes on your choices.</p>
+            <button className="create-ballot-btn" onClick={handleCreateBallot}>
+              Create New Ballot
+            </button>
+          </div>
+          <div className="link-section">
+            <ListBallots />
+          </div>
+        </>
       )}
 
       {state === HomeState.CREATING_BALLOT && (
