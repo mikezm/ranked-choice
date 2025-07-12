@@ -76,9 +76,31 @@ class TestGetVotesWorkflow(unittest.TestCase):
         self.assertIsInstance(result, BallotResultItem)
         self.assertEqual(result.winner_id, choice_id1)
         self.assertEqual(result.winner_name, "Choice 1")
-        self.assertEqual(len(result.rounds), 1)
-        self.assertEqual(result.rounds[0][choice_id1], 2)
-        self.assertEqual(result.rounds[0][choice_id2], 1)
+
+        # Group round items by round_index
+        round_items_by_round = {}
+        for item in result.rounds:
+            if item.round_index not in round_items_by_round:
+                round_items_by_round[item.round_index] = []
+            round_items_by_round[item.round_index].append(item)
+
+        # Check first round
+        first_round = round_items_by_round.get(0, [])
+        self.assertEqual(len(first_round), 2)  # Two choices received votes
+
+        # Find the RoundItem for Choice 1 and verify it has 2 votes
+        choice1_item = next(
+            (item for item in first_round if item.name == "Choice 1"), None
+        )
+        self.assertIsNotNone(choice1_item)
+        self.assertEqual(choice1_item.votes, 2)
+
+        # Find the RoundItem for Choice 2 and verify it has 1 vote
+        choice2_item = next(
+            (item for item in first_round if item.name == "Choice 2"), None
+        )
+        self.assertIsNotNone(choice2_item)
+        self.assertEqual(choice2_item.votes, 1)
 
     def test_no_simple_majority(self):
         slug = self.fake.slug()
@@ -134,17 +156,51 @@ class TestGetVotesWorkflow(unittest.TestCase):
         self.mock_repository.get_votes_by_ballot_id.assert_called_once_with(ballot_id=ballot_item.id)
 
         self.assertIsInstance(result, BallotResultItem)
-        self.assertEqual(len(result.rounds), 2)
-        self.assertEqual(result.rounds[0][choice_id1], 1)
-        self.assertEqual(result.rounds[0][choice_id2], 1)
-        self.assertEqual(result.rounds[0][choice_id3], 1)
 
+        # Group round items by round_index
+        round_items_by_round = {}
+        for item in result.rounds:
+            if item.round_index not in round_items_by_round:
+                round_items_by_round[item.round_index] = []
+            round_items_by_round[item.round_index].append(item)
+
+        # Check first round
+        first_round = round_items_by_round.get(0, [])
+        self.assertEqual(len(first_round), 3)
+
+        choice1_item = next(
+            (item for item in first_round if item.name == "Choice 1"), None
+        )
+        self.assertIsNotNone(choice1_item)
+        self.assertEqual(choice1_item.votes, 1)
+
+        choice2_item = next(
+            (item for item in first_round if item.name == "Choice 2"), None
+        )
+        self.assertIsNotNone(choice2_item)
+        self.assertEqual(choice2_item.votes, 1)
+
+        choice3_item = next(
+            (item for item in first_round if item.name == "Choice 3"), None
+        )
+        self.assertIsNotNone(choice3_item)
+        self.assertEqual(choice3_item.votes, 1)
+
+        # Check second round
+        second_round = round_items_by_round.get(1, [])
+        self.assertGreaterEqual(len(second_round), 2)
+
+        # Check that the total votes in the second round is 3
+        total_votes_second_round = sum(item.votes for item in second_round)
+        self.assertEqual(total_votes_second_round, 3)
+
+        # Check that the second round has the expected choices
+        second_round_names = [item.name for item in second_round]
         has_expected_choices = (
-            (choice_id1 in result.rounds[1] and choice_id2 in result.rounds[1]) or
-            (choice_id2 in result.rounds[1] and choice_id3 in result.rounds[1])
+            ("Choice 1" in second_round_names and "Choice 2" in second_round_names) or
+            ("Choice 2" in second_round_names and "Choice 3" in second_round_names)
         )
         self.assertTrue(has_expected_choices)
-        self.assertEqual(sum(result.rounds[1].values()), 3)
 
     def test_tie_scenario(self):
         slug = self.fake.slug()
@@ -186,10 +242,33 @@ class TestGetVotesWorkflow(unittest.TestCase):
         self.mock_repository.get_votes_by_ballot_id.assert_called_once_with(ballot_id=ballot_item.id)
 
         self.assertIsInstance(result, BallotResultItem)
-        self.assertEqual(len(result.rounds), 1)
-        self.assertEqual(result.rounds[0][choice_id1], 1)
-        self.assertEqual(result.rounds[0][choice_id2], 1)
 
+        # Group round items by round_index
+        round_items_by_round = {}
+        for item in result.rounds:
+            if item.round_index not in round_items_by_round:
+                round_items_by_round[item.round_index] = []
+            round_items_by_round[item.round_index].append(item)
+
+        # Check first round
+        first_round = round_items_by_round.get(0, [])
+        self.assertEqual(len(first_round), 2)  # Two choices received votes
+
+        # Find the RoundItem for Choice 1 and verify it has 1 vote
+        choice1_item = next(
+            (item for item in first_round if item.name == "Choice 1"), None
+        )
+        self.assertIsNotNone(choice1_item)
+        self.assertEqual(choice1_item.votes, 1)
+
+        # Find the RoundItem for Choice 2 and verify it has 1 vote
+        choice2_item = next(
+            (item for item in first_round if item.name == "Choice 2"), None
+        )
+        self.assertIsNotNone(choice2_item)
+        self.assertEqual(choice2_item.votes, 1)
+
+        # Check that the winner is one of the two choices
         self.assertTrue(result.winner_id in [choice_id1, choice_id2])
 
     def test_no_votes(self):

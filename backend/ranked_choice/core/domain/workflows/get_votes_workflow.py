@@ -1,11 +1,23 @@
 from collections import defaultdict
 from typing import Dict, List, Optional
 
-from ranked_choice.core.domain.items.ballot_item import BallotResultItem
+from ranked_choice.core.domain.items.ballot_item import BallotResultItem, RoundItem
 from ranked_choice.core.domain.items.voter_item import VoterItem
 from ranked_choice.core.repositories.ballot_repository_interface import (
     BallotRepositoryInterface,
 )
+
+
+def map_rounds_to_round_items(
+        rounds: List[Dict[int, int]],
+        choice_name_map: Dict[int, str]
+) -> List[RoundItem]:
+    result = []
+    for round_index, round_dict in enumerate(rounds):
+        for choice_id, votes in round_dict.items():
+            name = choice_name_map.get(choice_id, f"Unknown ({choice_id})")
+            result.append(RoundItem(name=name, votes=votes, round_index=round_index))
+    return result
 
 
 def get_votes_workflow(
@@ -69,7 +81,7 @@ def calculate_ranked_choice_winner(
             return BallotResultItem(
                 winner_id=winner_id,
                 winner_name=choice_name_map.get(winner_id, "Unknown"),
-                rounds=rounds
+                rounds=map_rounds_to_round_items(rounds, choice_name_map)
             )
 
         min_votes = min(vote_counts.values())
@@ -84,7 +96,7 @@ def calculate_ranked_choice_winner(
             return BallotResultItem(
                 winner_id=winner_id,
                 winner_name=choice_name_map.get(winner_id, "Unknown"),
-                rounds=rounds
+                rounds=map_rounds_to_round_items(rounds, choice_name_map)
             )
 
         loser = losers[0]
@@ -104,11 +116,11 @@ def calculate_ranked_choice_winner(
             return BallotResultItem(
                 winner_id=winner_id,
                 winner_name=choice_name_map.get(winner_id, "Unknown"),
-                rounds=rounds
+                rounds=map_rounds_to_round_items(rounds, choice_name_map)
             )
 
     return BallotResultItem(
         winner_id=-1,
         winner_name="No winner",
-        rounds=rounds
+        rounds=map_rounds_to_round_items(rounds, choice_name_map)
     )
