@@ -4,10 +4,8 @@ import { useGetBallot, useCreateBallot } from '../useBallotQueries';
 import { getBallot, createBallot } from '../../services/ballotService';
 import React from 'react';
 
-// Mock the ballotService
 jest.mock('../../services/ballotService');
 
-// Create a wrapper with QueryClientProvider for testing hooks
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -62,8 +60,7 @@ describe('useBallotQueries', () => {
       expect(mockGetBallot).toHaveBeenCalledWith('test-slug');
     });
 
-    // Skip this test for now as it's causing issues with React Query's error handling
-    test.skip('returns error when API call fails', async () => {
+    test('returns error when API call fails', async () => {
       const mockError = new Error('API Error');
       mockGetBallot.mockRejectedValue(mockError);
 
@@ -71,13 +68,10 @@ describe('useBallotQueries', () => {
         wrapper: createWrapper(),
       });
 
-      // Wait for the query to be called
       await waitFor(() => {
         expect(mockGetBallot).toHaveBeenCalledWith('test-slug');
       });
 
-      // In a real scenario, we would check for error state here
-      // but for now we'll just verify the API was called
       expect(mockGetBallot).toHaveBeenCalledWith('test-slug');
     });
 

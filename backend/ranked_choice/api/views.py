@@ -15,6 +15,9 @@ from ranked_choice.core.domain.workflows.create_vote_workflow import (
     create_vote_workflow,
 )
 from ranked_choice.core.domain.workflows.get_ballot_workflow import get_ballot_workflow
+from ranked_choice.core.domain.workflows.list_ballots_workflow import (
+    list_ballots_workflow,
+)
 
 
 @api_view(['GET'])
@@ -118,6 +121,35 @@ def create_vote(request):
 
     except ValueError as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception:
+        return Response(
+            {"error": "Internal server error"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def list_ballots(request):
+    """
+    Retrieve all ballots.
+
+    Args:
+        request: The HTTP request object
+
+    Returns:
+        Response with serialized list of ballots or the appropriate error message
+    """
+    try:
+        ballot_items = list_ballots_workflow()
+        serializer = BallotDetailSerializer(ballot_items, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    except ValueError as e:
+        return Response(
+            {"error": str(e)},
+            status=status.HTTP_400_BAD_REQUEST
+        )
     except Exception:
         return Response(
             {"error": "Internal server error"},

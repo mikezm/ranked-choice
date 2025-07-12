@@ -1,0 +1,225 @@
+/* BallotDetail.css */
+
+.ballot-detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.ballot-header {
+  margin-bottom: 30px;
+}
+
+.ballot-header h1 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.ballot-description {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.ballot-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.choices-section {
+  flex: 1;
+  min-width: 300px;
+}
+
+.voting-section {
+  flex: 1;
+  min-width: 300px;
+}
+
+.choices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.choice-item {
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f5f5f5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.choice-item:hover {
+  background-color: #e9e9e9;
+  transform: translateY(-2px);
+}
+
+.choice-item.selected {
+  background-color: #e6f7ff;
+  border-left: 4px solid #1890ff;
+}
+
+.choice-item h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 1.2rem;
+}
+
+.choice-item p {
+  margin: 0;
+  color: #666;
+}
+
+.actions {
+  margin-top: 20px;
+}
+
+.back-link {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #f0f0f0;
+  color: #333;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.back-link:hover {
+  background-color: #e0e0e0;
+}
+
+/* Voting Form Styles */
+.voting-form {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.voting-form h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.ranked-choices {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ranked-choice-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 8px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+.rank {
+  font-weight: bold;
+  margin-right: 10px;
+  min-width: 25px;
+}
+
+.choice-name {
+  flex-grow: 1;
+}
+
+.rank-controls {
+  display: flex;
+  gap: 5px;
+}
+
+.rank-controls button {
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 4px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rank-controls button:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.rank-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.submit-vote-button {
+  background-color: #1890ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submit-vote-button:hover:not(:disabled) {
+  background-color: #40a9ff;
+}
+
+.submit-vote-button:disabled {
+  background-color: #bfbfbf;
+  cursor: not-allowed;
+}
+
+.voting-form-success,
+.voting-form-error {
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.voting-form-success {
+  background-color: #f6ffed;
+  border: 1px solid #b7eb8f;
+}
+
+.voting-form-error {
+  background-color: #fff2f0;
+  border: 1px solid #ffccc7;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .ballot-content {
+    flex-direction: column;
+  }
+
+  .choices-section,
+  .voting-section {
+    width: 100%;
+  }
+}

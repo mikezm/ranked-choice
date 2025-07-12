@@ -30,6 +30,7 @@ class BallotChoiceSerializer(serializers.Serializer):
     """
     Serializer for ballot choices in the response.
     """
+    id = serializers.IntegerField()
     name = serializers.CharField()
     description = serializers.CharField(allow_null=True)
 
@@ -38,6 +39,7 @@ class BallotDetailSerializer(serializers.Serializer):
     """
     Serializer for ballot details in the response.
     """
+    id = serializers.IntegerField()
     title = serializers.CharField()
     slug = serializers.CharField()
     description = serializers.CharField(allow_null=True)
@@ -61,4 +63,3 @@ class CreateVoterSerializer(serializers.Serializer):
         if not value:
             raise serializers.ValidationError("At least one vote must be provided.")
         return value
-

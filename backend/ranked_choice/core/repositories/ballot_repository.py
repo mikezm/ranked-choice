@@ -149,4 +149,3 @@ class BallotRepository(BallotRepositoryInterface):
             ))
 
         return voter_items
-
