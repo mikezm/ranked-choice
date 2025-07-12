@@ -3,6 +3,21 @@ from typing import List, Optional
 
 
 @dataclass
+class RoundItem:
+    name: str
+    votes: int
+    round_index: int
+
+
+@dataclass
+class BallotResultItem:
+    winner_id: int
+    winner_name: str
+    rounds: List[RoundItem]
+    title: str = ""
+
+
+@dataclass
 class ChoiceItem:
     """
     Domain item representing a ballot choice.
