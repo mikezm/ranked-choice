@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useCreateVoter } from '../hooks/useVoterMutations';
 import { Ballot } from '../services/ballotService';
 import { Vote } from '../services/voterService';
@@ -15,7 +15,29 @@ const VotingForm: React.FC<VotingFormProps> = ({ ballot, selectedChoiceId, onCho
   const [isSubmitted, setIsSubmitted] = useState(false);
   const createVoterMutation = useCreateVoter();
 
-  // Handle external choice selection (from the ballot choices list)
+  const handleChoiceClick = useCallback(
+    (choiceId: number) => {
+      const existingIndex = selectedChoices.findIndex(vote => vote.choice_id === choiceId);
+
+      if (existingIndex >= 0) {
+        // If already selected, remove it
+        const newSelectedChoices = [...selectedChoices];
+        newSelectedChoices.splice(existingIndex, 1);
+
+        const updatedChoices = newSelectedChoices.map((vote, index) => ({
+          ...vote,
+          rank: index + 1,
+        }));
+
+        setSelectedChoices(updatedChoices);
+      } else {
+        const newRank = selectedChoices.length + 1;
+        setSelectedChoices([...selectedChoices, { choice_id: choiceId, rank: newRank }]);
+      }
+    },
+    [selectedChoices]
+  );
+
   useEffect(() => {
     if (selectedChoiceId) {
       handleChoiceClick(selectedChoiceId);
@@ -24,30 +46,7 @@ const VotingForm: React.FC<VotingFormProps> = ({ ballot, selectedChoiceId, onCho
         onChoiceSelected(null);
       }
     }
-  }, [selectedChoiceId]);
-
-  const handleChoiceClick = (choiceId: number) => {
-    // Check if choice is already selected
-    const existingIndex = selectedChoices.findIndex(vote => vote.choice_id === choiceId);
-
-    if (existingIndex >= 0) {
-      // If already selected, remove it
-      const newSelectedChoices = [...selectedChoices];
-      newSelectedChoices.splice(existingIndex, 1);
-
-      // Update ranks for remaining choices
-      const updatedChoices = newSelectedChoices.map((vote, index) => ({
-        ...vote,
-        rank: index + 1,
-      }));
-
-      setSelectedChoices(updatedChoices);
-    } else {
-      // If not selected, add it with the next rank
-      const newRank = selectedChoices.length + 1;
-      setSelectedChoices([...selectedChoices, { choice_id: choiceId, rank: newRank }]);
-    }
-  };
+  }, [handleChoiceClick, onChoiceSelected, selectedChoiceId]);
 
   const moveChoice = (index: number, direction: 'up' | 'down') => {
     if (

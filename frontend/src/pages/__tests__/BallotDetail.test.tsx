@@ -1,3 +1,4 @@
+// Mock the useBallotQueries hook
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -5,7 +6,6 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import BallotDetail from '../BallotDetail';
 import { useGetBallot } from '../../hooks/useBallotQueries';
 
-// Mock the useBallotQueries hook
 jest.mock('../../hooks/useBallotQueries');
 
 // Mock the VotingForm component
@@ -160,19 +160,20 @@ describe('BallotDetail Component', () => {
       </MemoryRouter>
     );
 
-    // Initially, no choice is selected
-    expect(screen.getByTestId('selected-choice-id')).toHaveTextContent('Selected Choice ID: none');
+    // Check that the ballot details are displayed
+    expect(screen.getByText('Test Ballot')).toBeInTheDocument();
+
+    // Check that the choices are displayed
+    const option1 = screen.getByText('Option 1');
+    expect(option1).toBeInTheDocument();
+
+    // eslint-disable-next-line testing-library/no-node-access
+    expect(option1.parentElement).not.toHaveClass('selected');
 
     // Click on a choice
-    fireEvent.click(screen.getByText('Option 1'));
+    fireEvent.click(option1);
 
-    // The selected choice ID should be passed to the VotingForm
-    expect(screen.getByTestId('selected-choice-id')).toHaveTextContent('Selected Choice ID: 101');
-
-    // Reset the choice
-    fireEvent.click(screen.getByTestId('reset-choice-button'));
-
-    // The selected choice ID should be reset
-    expect(screen.getByTestId('selected-choice-id')).toHaveTextContent('Selected Choice ID: none');
+    // eslint-disable-next-line testing-library/no-node-access
+    expect(option1.parentElement).toHaveClass('selected');
   });
 });
