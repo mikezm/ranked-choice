@@ -52,8 +52,15 @@ describe('VotingForm', () => {
 
   it('handles external choice selection', async () => {
     const onChoiceSelected = jest.fn();
-    const { rerender } = renderWithQueryClient(
-      <VotingForm ballot={mockBallot} selectedChoiceId={null} onChoiceSelected={onChoiceSelected} />
+    const queryClient = createQueryClient();
+    const { rerender } = render(
+      <QueryClientProvider client={queryClient}>
+        <VotingForm
+          ballot={mockBallot}
+          selectedChoiceId={null}
+          onChoiceSelected={onChoiceSelected}
+        />
+      </QueryClientProvider>
     );
 
     // No choices should be displayed initially
@@ -61,7 +68,7 @@ describe('VotingForm', () => {
 
     // Simulate external choice selection
     rerender(
-      <QueryClientProvider client={createQueryClient()}>
+      <QueryClientProvider client={queryClient}>
         <VotingForm
           ballot={mockBallot}
           selectedChoiceId={101}
@@ -70,7 +77,6 @@ describe('VotingForm', () => {
       </QueryClientProvider>
     );
 
-    // Wait for the effect to run
     await waitFor(() => {
       expect(screen.getByText('Choice 1')).toBeInTheDocument();
     });
@@ -78,29 +84,34 @@ describe('VotingForm', () => {
   });
 
   it('allows reordering of choices', async () => {
-    const { rerender } = renderWithQueryClient(
-      <VotingForm ballot={mockBallot} selectedChoiceId={101} />
+    const queryClient = createQueryClient();
+    const { rerender } = render(
+      <QueryClientProvider client={queryClient}>
+        <VotingForm ballot={mockBallot} selectedChoiceId={101} />
+      </QueryClientProvider>
     );
 
+    await waitFor(() => {
+      expect(screen.getByText('Choice 1')).toBeInTheDocument();
+    });
+
     rerender(
-      <QueryClientProvider client={createQueryClient()}>
+      <QueryClientProvider client={queryClient}>
         <VotingForm ballot={mockBallot} selectedChoiceId={102} />
       </QueryClientProvider>
     );
 
-    expect(screen.getByText('Choice 1')).toBeInTheDocument();
-    expect(screen.getByText('Choice 2')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Choice 2')).toBeInTheDocument();
+    });
 
-    // Find the down button for the first choice
     const downButtons = screen.getAllByText('↓');
     fireEvent.click(downButtons[0]);
 
-    // Check that the order has changed
     const rankElements = screen.getAllByText(/\d+\./);
     expect(rankElements[0].textContent).toBe('1.');
     expect(rankElements[1].textContent).toBe('2.');
 
-    // The choices should now be in reverse order
     const choiceElements = screen.getAllByText(/Choice \d/);
     expect(choiceElements[0].textContent).toBe('Choice 2');
     expect(choiceElements[1].textContent).toBe('Choice 1');
@@ -108,21 +119,16 @@ describe('VotingForm', () => {
 
   it('submits the form with voter data', async () => {
     renderWithQueryClient(<VotingForm ballot={mockBallot} selectedChoiceId={101} />);
-
-    // Wait for the choice to be added
     await waitFor(() => {
       expect(screen.getByText('Choice 1')).toBeInTheDocument();
     });
 
-    // Fill in the voter name
     fireEvent.change(screen.getByLabelText(/your name/i), {
       target: { value: 'Test Voter' },
     });
 
-    // Submit the form
     fireEvent.click(screen.getByText(/submit vote/i));
 
-    // Check that createVoter was called with the correct data
     await waitFor(() => {
       expect(voterService.createVoter).toHaveBeenCalledWith({
         name: 'Test Voter',
@@ -131,51 +137,36 @@ describe('VotingForm', () => {
       });
     });
 
-    // Check that success message is shown
     await waitFor(() => {
       expect(screen.getByText(/thank you for voting/i)).toBeInTheDocument();
     });
   });
 
   it('shows validation error when submitting without a name', async () => {
-    // Mock window.alert
     const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
-
     renderWithQueryClient(<VotingForm ballot={mockBallot} selectedChoiceId={101} />);
 
-    // Wait for the choice to be added
     await waitFor(() => {
       expect(screen.getByText('Choice 1')).toBeInTheDocument();
     });
 
-    // Submit without entering a name
     fireEvent.click(screen.getByText(/submit vote/i));
-
-    // Check that alert was called
     expect(alertMock).toHaveBeenCalledWith('Please enter your name');
 
-    // Cleanup
     alertMock.mockRestore();
   });
 
   it('shows validation error when submitting without choices', async () => {
-    // Mock window.alert
     const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
-
     renderWithQueryClient(<VotingForm ballot={mockBallot} />);
-
-    // Fill in the voter name
     fireEvent.change(screen.getByLabelText(/your name/i), {
       target: { value: 'Test Voter' },
     });
 
-    // Submit without selecting any choices
     fireEvent.click(screen.getByText(/submit vote/i));
 
-    // Check that alert was called
     expect(alertMock).toHaveBeenCalledWith('Please select at least one choice');
 
-    // Cleanup
     alertMock.mockRestore();
   });
 });

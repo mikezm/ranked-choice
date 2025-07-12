@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useCreateVoter } from '../hooks/useVoterMutations';
 import { Ballot } from '../services/ballotService';
 import { Vote } from '../services/voterService';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faX } from '@fortawesome/free-solid-svg-icons';
 
 interface VotingFormProps {
   ballot: Ballot;
@@ -15,38 +17,31 @@ const VotingForm: React.FC<VotingFormProps> = ({ ballot, selectedChoiceId, onCho
   const [isSubmitted, setIsSubmitted] = useState(false);
   const createVoterMutation = useCreateVoter();
 
-  const handleChoiceClick = useCallback(
-    (choiceId: number) => {
-      const existingIndex = selectedChoices.findIndex(vote => vote.choice_id === choiceId);
+  const removeChoice = (index: number) => {
+    const newSelectedChoices = [...selectedChoices];
+    newSelectedChoices.splice(index, 1);
 
-      if (existingIndex >= 0) {
-        // If already selected, remove it
-        const newSelectedChoices = [...selectedChoices];
-        newSelectedChoices.splice(existingIndex, 1);
+    // Update ranks for remaining choices
+    const updatedChoices = newSelectedChoices.map((vote, idx) => ({
+      ...vote,
+      rank: idx + 1,
+    }));
 
-        const updatedChoices = newSelectedChoices.map((vote, index) => ({
-          ...vote,
-          rank: index + 1,
-        }));
-
-        setSelectedChoices(updatedChoices);
-      } else {
-        const newRank = selectedChoices.length + 1;
-        setSelectedChoices([...selectedChoices, { choice_id: choiceId, rank: newRank }]);
-      }
-    },
-    [selectedChoices]
-  );
+    setSelectedChoices(updatedChoices);
+  };
 
   useEffect(() => {
     if (selectedChoiceId) {
-      handleChoiceClick(selectedChoiceId);
-      // Reset the selected choice ID in the parent component
+      const existingIndex = selectedChoices.findIndex(vote => vote.choice_id === selectedChoiceId);
+      if (existingIndex < 0) {
+        const newRank = selectedChoices.length + 1;
+        setSelectedChoices([...selectedChoices, { choice_id: selectedChoiceId, rank: newRank }]);
+      }
       if (onChoiceSelected) {
         onChoiceSelected(null);
       }
     }
-  }, [handleChoiceClick, onChoiceSelected, selectedChoiceId]);
+  }, [selectedChoiceId, onChoiceSelected, selectedChoices]);
 
   const moveChoice = (index: number, direction: 'up' | 'down') => {
     if (
@@ -164,6 +159,14 @@ const VotingForm: React.FC<VotingFormProps> = ({ ballot, selectedChoiceId, onCho
                       disabled={index === selectedChoices.length - 1}
                     >
                       ↓
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => removeChoice(index)}
+                      className="remove-choice-button"
+                      aria-label="Remove Choice"
+                    >
+                      <FontAwesomeIcon icon={faX} />
                     </button>
                   </div>
                 </li>

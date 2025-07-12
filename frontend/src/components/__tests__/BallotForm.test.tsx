@@ -40,15 +40,12 @@ describe('BallotForm Component', () => {
 
     // Check initial choices (should be 2)
     const choiceHeadings = screen.getAllByText(/Choice \d+/);
-    console.log('Choice headings:', choiceHeadings.length);
     expect(choiceHeadings.length).toBe(2);
 
     const nameLabels = screen.getAllByLabelText('Name');
-    console.log('Name labels:', nameLabels.length);
     expect(nameLabels.length).toBe(2);
 
     const descLabels = screen.getAllByLabelText(/Description/);
-    console.log('Description labels:', descLabels.length);
     expect(descLabels.length).toBe(3); // 2 for choices, 1 for ballot description
 
     // Check buttons
