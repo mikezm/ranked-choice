@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { createBallot, getBallot } from '../ballotService';
+import { createBallot, getBallot, listBallots } from '../ballotService';
 
 // Mock axios
 jest.mock('axios');
@@ -93,6 +93,40 @@ describe('ballotService', () => {
       expect(mockAxios.get).toHaveBeenCalledWith(
         expect.stringContaining(`/api/ballots/${mockSlug}/`)
       );
+    });
+  });
+  describe('listBallots', () => {
+    test('gets a ballot successfully', async () => {
+      const mockBallots = [
+        {
+          title: 'Test Ballot',
+          description: 'Test Description',
+          choices: [
+            { name: 'Option 1', description: 'First option' },
+            { name: 'Option 2', description: '' },
+          ],
+        },
+      ];
+
+      const mockResponse = {
+        data: mockBallots,
+      };
+
+      mockAxios.get.mockResolvedValue(mockResponse);
+
+      const result = await listBallots();
+
+      expect(mockAxios.get).toHaveBeenCalledWith(expect.stringContaining(`/api/ballots/all/`));
+      expect(result).toEqual(mockBallots);
+    });
+
+    test('throws an error when API call fails', async () => {
+      const mockError = new Error('API Error');
+
+      mockAxios.get.mockRejectedValue(mockError);
+
+      await expect(listBallots()).rejects.toThrow(mockError);
+      expect(mockAxios.get).toHaveBeenCalledWith(expect.stringContaining(`/api/ballots/all/`));
     });
   });
 });
