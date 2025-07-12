@@ -1,5 +1,12 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Dict
+
+
+@dataclass
+class BallotResultItem:
+    winner_id: int
+    winner_name: str
+    rounds: List[Dict[int, int]]
 
 
 @dataclass
