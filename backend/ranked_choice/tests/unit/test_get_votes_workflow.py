@@ -3,10 +3,16 @@ from unittest.mock import Mock
 
 from faker import Faker
 
-from ranked_choice.core.domain.items.voter_item import VoterItem, VoteItem
-from ranked_choice.core.domain.items.ballot_item import BallotItem, ChoiceItem, BallotResultItem
+from ranked_choice.core.domain.items.ballot_item import (
+    BallotItem,
+    BallotResultItem,
+    ChoiceItem,
+)
+from ranked_choice.core.domain.items.voter_item import VoteItem, VoterItem
 from ranked_choice.core.domain.workflows.get_votes_workflow import get_votes_workflow
-from ranked_choice.core.repositories.ballot_repository_interface import BallotRepositoryInterface
+from ranked_choice.core.repositories.ballot_repository_interface import (
+    BallotRepositoryInterface,
+)
 
 
 class TestGetVotesWorkflow(unittest.TestCase):
@@ -26,9 +32,18 @@ class TestGetVotesWorkflow(unittest.TestCase):
             slug=slug,
             description=self.fake.sentence(),
             choices=[
-                ChoiceItem(id=choice_id1, name="Choice 1", description=self.fake.sentence()),
-                ChoiceItem(id=choice_id2, name="Choice 2", description=self.fake.sentence()),
-                ChoiceItem(id=choice_id3, name="Choice 3", description=self.fake.sentence()),
+                ChoiceItem(
+                    id=choice_id1, name="Choice 1",
+                    description=self.fake.sentence()
+                ),
+                ChoiceItem(
+                    id=choice_id2, name="Choice 2",
+                    description=self.fake.sentence()
+                ),
+                ChoiceItem(
+                    id=choice_id3, name="Choice 3",
+                    description=self.fake.sentence()
+                ),
             ]
         )
 
@@ -77,9 +92,18 @@ class TestGetVotesWorkflow(unittest.TestCase):
             slug=slug,
             description=self.fake.sentence(),
             choices=[
-                ChoiceItem(id=choice_id1, name="Choice 1", description=self.fake.sentence()),
-                ChoiceItem(id=choice_id2, name="Choice 2", description=self.fake.sentence()),
-                ChoiceItem(id=choice_id3, name="Choice 3", description=self.fake.sentence()),
+                ChoiceItem(
+                    id=choice_id1, name="Choice 1",
+                    description=self.fake.sentence()
+                ),
+                ChoiceItem(
+                    id=choice_id2, name="Choice 2",
+                    description=self.fake.sentence()
+                ),
+                ChoiceItem(
+                    id=choice_id3, name="Choice 3",
+                    description=self.fake.sentence()
+                ),
             ]
         )
 
@@ -115,15 +139,11 @@ class TestGetVotesWorkflow(unittest.TestCase):
         self.assertEqual(result.rounds[0][choice_id2], 1)
         self.assertEqual(result.rounds[0][choice_id3], 1)
 
-        # Check that either choice_id1 and choice_id2 are in round 2 (after choice_id3 is eliminated)
-        # or choice_id2 and choice_id3 are in round 2 (after choice_id1 is eliminated)
         has_expected_choices = (
             (choice_id1 in result.rounds[1] and choice_id2 in result.rounds[1]) or
             (choice_id2 in result.rounds[1] and choice_id3 in result.rounds[1])
         )
         self.assertTrue(has_expected_choices)
-
-        # Check that the total votes in round 2 equals the total number of voters
         self.assertEqual(sum(result.rounds[1].values()), 3)
 
     def test_tie_scenario(self):
@@ -137,8 +157,14 @@ class TestGetVotesWorkflow(unittest.TestCase):
             slug=slug,
             description=self.fake.sentence(),
             choices=[
-                ChoiceItem(id=choice_id1, name="Choice 1", description=self.fake.sentence()),
-                ChoiceItem(id=choice_id2, name="Choice 2", description=self.fake.sentence()),
+                ChoiceItem(
+                    id=choice_id1, name="Choice 1",
+                    description=self.fake.sentence()
+                ),
+                ChoiceItem(
+                    id=choice_id2, name="Choice 2",
+                    description=self.fake.sentence()
+                ),
             ]
         )
 
@@ -177,8 +203,14 @@ class TestGetVotesWorkflow(unittest.TestCase):
             slug=slug,
             description=self.fake.sentence(),
             choices=[
-                ChoiceItem(id=choice_id1, name="Choice 1", description=self.fake.sentence()),
-                ChoiceItem(id=choice_id2, name="Choice 2", description=self.fake.sentence()),
+                ChoiceItem(
+                    id=choice_id1, name="Choice 1",
+                    description=self.fake.sentence()
+                ),
+                ChoiceItem(
+                    id=choice_id2, name="Choice 2",
+                    description=self.fake.sentence()
+                ),
             ]
         )
 
