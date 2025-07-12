@@ -42,45 +42,48 @@ const BallotDetail: React.FC = () => {
   };
 
   return (
-    <div className="ballot-detail-container">
-      <div className="ballot-header">
-        <h1>{ballot.title}</h1>
-        {ballot.description && <p className="ballot-description">{ballot.description}</p>}
+    <div className="ballot-page">
+      <div className="actions">
+        <Link to="/" className="back-link">
+          Back to Home
+        </Link>
+        <Link to={`/ballot/results/${slug}`} className="back-link">
+          Ballot Results
+        </Link>
       </div>
-
-      <div className="ballot-content">
-        <div className="choices-section">
-          <h2>Choices</h2>
-          <div className="choices-list">
-            {ballot.choices.map((choice, index) => (
-              <div
-                key={`${choice.id}-${index}`}
-                className={`choice-item ${selectedChoiceId === choice.id ? 'selected' : ''}`}
-                onClick={() => {
-                  if (choice.id) {
-                    handleChoiceClick(choice.id);
-                  }
-                }}
-              >
-                <h3>{choice.name}</h3>
-                {choice.description && <p>{choice.description}</p>}
-              </div>
-            ))}
-          </div>
-
-          <div className="actions">
-            <Link to="/" className="back-link">
-              Back to Home
-            </Link>
-          </div>
+      <div className="ballot-detail-container">
+        <div className="ballot-header">
+          <h1>{ballot.title}</h1>
+          {ballot.description && <p className="ballot-description">{ballot.description}</p>}
         </div>
+        <div className="ballot-content">
+          <div className="choices-section">
+            <h2>Choices</h2>
+            <div className="choices-list">
+              {ballot.choices.map((choice, index) => (
+                <div
+                  key={`${choice.id}-${index}`}
+                  className={`choice-item ${selectedChoiceId === choice.id ? 'selected' : ''}`}
+                  onClick={() => {
+                    if (choice.id) {
+                      handleChoiceClick(choice.id);
+                    }
+                  }}
+                >
+                  <h3>{choice.name}</h3>
+                  {choice.description && <p>{choice.description}</p>}
+                </div>
+              ))}
+            </div>
+          </div>
 
-        <div className="voting-section">
-          <VotingForm
-            ballot={ballot}
-            selectedChoiceId={selectedChoiceId}
-            onChoiceSelected={handleChoiceSelected}
-          />
+          <div className="voting-section">
+            <VotingForm
+              ballot={ballot}
+              selectedChoiceId={selectedChoiceId}
+              onChoiceSelected={handleChoiceSelected}
+            />
+          </div>
         </div>
       </div>
     </div>
