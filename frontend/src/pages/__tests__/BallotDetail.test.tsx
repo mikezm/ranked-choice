@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import BallotDetail from '../BallotDetail';
@@ -7,6 +7,25 @@ import { useGetBallot } from '../../hooks/useBallotQueries';
 
 // Mock the useBallotQueries hook
 jest.mock('../../hooks/useBallotQueries');
+
+// Mock the VotingForm component
+jest.mock('../../components/VotingForm', () => {
+  return {
+    __esModule: true,
+    default: jest.fn(({ ballot, selectedChoiceId, onChoiceSelected }) => (
+      <div data-testid="mock-voting-form">
+        <div>Ballot ID: {ballot.id}</div>
+        <div data-testid="selected-choice-id">Selected Choice ID: {selectedChoiceId || 'none'}</div>
+        <button
+          data-testid="reset-choice-button"
+          onClick={() => onChoiceSelected && onChoiceSelected(null)}
+        >
+          Reset Choice
+        </button>
+      </div>
+    )),
+  };
+});
 
 describe('BallotDetail Component', () => {
   const mockUseGetBallot = useGetBallot as jest.MockedFunction<typeof useGetBallot>;
@@ -79,11 +98,13 @@ describe('BallotDetail Component', () => {
 
   test('renders ballot details when data is available', () => {
     const mockBallot = {
+      id: 1,
       title: 'Test Ballot',
       description: 'This is a test ballot',
+      slug: 'test-slug',
       choices: [
-        { name: 'Option 1', description: 'First option' },
-        { name: 'Option 2', description: '' },
+        { id: 101, name: 'Option 1', description: 'First option' },
+        { id: 102, name: 'Option 2', description: '' },
       ],
     };
 
@@ -102,6 +123,7 @@ describe('BallotDetail Component', () => {
       </MemoryRouter>
     );
 
+    // Check that the ballot details are displayed
     expect(screen.getByText('Test Ballot')).toBeInTheDocument();
     expect(screen.getByText('This is a test ballot')).toBeInTheDocument();
     expect(screen.getByText('Choices')).toBeInTheDocument();
@@ -109,5 +131,48 @@ describe('BallotDetail Component', () => {
     expect(screen.getByText('First option')).toBeInTheDocument();
     expect(screen.getByText('Option 2')).toBeInTheDocument();
     expect(screen.getByText('Back to Home')).toBeInTheDocument();
+  });
+
+  test('handles choice selection', () => {
+    const mockBallot = {
+      id: 1,
+      title: 'Test Ballot',
+      description: 'This is a test ballot',
+      slug: 'test-slug',
+      choices: [
+        { id: 101, name: 'Option 1', description: 'First option' },
+        { id: 102, name: 'Option 2', description: '' },
+      ],
+    };
+
+    mockUseGetBallot.mockReturnValue({
+      data: mockBallot,
+      isLoading: false,
+      error: null,
+      isError: false,
+    } as any);
+
+    render(
+      <MemoryRouter initialEntries={['/ballot/test-slug']}>
+        <Routes>
+          <Route path="/ballot/:slug" element={<BallotDetail />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    // Initially, no choice is selected
+    expect(screen.getByTestId('selected-choice-id')).toHaveTextContent('Selected Choice ID: none');
+
+    // Click on a choice
+    fireEvent.click(screen.getByText('Option 1'));
+
+    // The selected choice ID should be passed to the VotingForm
+    expect(screen.getByTestId('selected-choice-id')).toHaveTextContent('Selected Choice ID: 101');
+
+    // Reset the choice
+    fireEvent.click(screen.getByTestId('reset-choice-button'));
+
+    // The selected choice ID should be reset
+    expect(screen.getByTestId('selected-choice-id')).toHaveTextContent('Selected Choice ID: none');
   });
 });

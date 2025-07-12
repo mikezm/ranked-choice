@@ -3,6 +3,7 @@ import axios from 'axios';
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 export interface Choice {
+  id?: number;
   name: string;
   description: string;
 }
@@ -18,6 +19,7 @@ export interface CreateBallotResponse {
 }
 
 export interface Ballot {
+  id: number;
   title: string;
   slug: string;
   description: string | null;

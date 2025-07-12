@@ -1,4 +1,4 @@
-.PHONY: start build makemigration migrate lint lint-fix test lint-ui test-ui
+.PHONY: start stop build makemigration migrate lint lint-fix test lint-ui test-ui
 
 BACKEND_CMD=docker compose exec backend
 FRONTEND_CMD=docker compose exec frontend
@@ -6,6 +6,9 @@ FRONTEND_CMD=docker compose exec frontend
 # Start all services
 start:
 	docker compose up -d
+
+stop:
+	docker compose down
 
 # Build all services
 build:
