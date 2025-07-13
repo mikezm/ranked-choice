@@ -1,7 +1,7 @@
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useGetBallot, useCreateBallot } from '../useBallotQueries';
-import { getBallot, createBallot } from '../../services/ballotService';
+import { useGetBallot, useCreateBallot, useGetBallotResults } from '../useBallotQueries';
+import { getBallot, createBallot, getBallotResults, Round } from '../../services/ballotService';
 import React from 'react';
 
 jest.mock('../../services/ballotService');
@@ -23,6 +23,7 @@ const createWrapper = () => {
 describe('useBallotQueries', () => {
   const mockGetBallot = getBallot as jest.MockedFunction<typeof getBallot>;
   const mockCreateBallot = createBallot as jest.MockedFunction<typeof createBallot>;
+  const mockGetBallotResults = getBallotResults as jest.MockedFunction<typeof getBallotResults>;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -40,7 +41,7 @@ describe('useBallotQueries', () => {
         ],
       };
 
-      mockGetBallot.mockResolvedValue(mockBallot);
+      mockGetBallot.mockResolvedValue(mockBallot as any);
 
       const { result } = renderHook(() => useGetBallot('test-slug'), {
         wrapper: createWrapper(),
@@ -164,6 +165,39 @@ describe('useBallotQueries', () => {
 
       // Data should be undefined
       expect(result.current.data).toBeUndefined();
+    });
+  });
+
+  describe('useGetBallotResults', () => {
+    test('returns ballot data when successful', async () => {
+      const mockBallotResults = {
+        winner_id: 1,
+        winner_name: 'Test Winner',
+        title: 'Test Ballot',
+        rounds: [{ name: 'Test Choice 1', votes: 3, round_index: 1 } as Round],
+      } as any;
+
+      mockGetBallotResults.mockResolvedValue(mockBallotResults);
+
+      const { result } = renderHook(() => useGetBallotResults('test-ballot'), {
+        wrapper: createWrapper(),
+      });
+
+      expect(result.current.isLoading).toBe(true);
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
+    });
+
+    test('returns error when API call fails', async () => {
+      const mockError = new Error('API Error');
+      mockGetBallotResults.mockRejectedValue(mockError);
+      renderHook(() => useGetBallotResults('test-slug'), {
+        wrapper: createWrapper(),
+      });
+
+      await waitFor(() => {
+        expect(mockGetBallotResults).toHaveBeenCalledWith('test-slug');
+      });
+      expect(mockGetBallotResults).toHaveBeenCalledWith('test-slug');
     });
   });
 });

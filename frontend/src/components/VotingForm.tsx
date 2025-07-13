@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCreateVoter } from '../hooks/useVoterMutations';
 import { Ballot } from '../services/ballotService';
 import { Vote } from '../services/voterService';
