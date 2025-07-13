@@ -160,20 +160,14 @@ describe('BallotDetail Component', () => {
       </MemoryRouter>
     );
 
-    // Check that the ballot details are displayed
     expect(screen.getByText('Test Ballot')).toBeInTheDocument();
 
-    // Check that the choices are displayed
-    const option1 = screen.getByText('Option 1');
+    const option1 = screen.getByTestId('choice-101');
     expect(option1).toBeInTheDocument();
+    expect(option1).not.toHaveClass('selected');
 
-    // eslint-disable-next-line testing-library/no-node-access
-    expect(option1.parentElement).not.toHaveClass('selected');
-
-    // Click on a choice
     fireEvent.click(option1);
 
-    // eslint-disable-next-line testing-library/no-node-access
-    expect(option1.parentElement).toHaveClass('selected');
+    expect(option1).toHaveClass('selected');
   });
 });

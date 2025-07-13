@@ -46,8 +46,11 @@ const BallotResult: React.FC = () => {
   if (isLoading || !ballotResult) {
     return <div className="loading">Loading ballot...</div>;
   }
-
+  let maxVotes = 0;
   const roundsData = ballotResult.rounds.reduce((acc, round) => {
+    if (round.votes > maxVotes) {
+      maxVotes = round.votes;
+    }
     const roundIndex = round.round_index;
     if (!acc[roundIndex]) {
       acc[roundIndex] = [];
@@ -55,6 +58,10 @@ const BallotResult: React.FC = () => {
     acc[roundIndex].push(round);
     return acc;
   }, {} as Record<number, typeof ballotResult.rounds>);
+  const ticks = [];
+  for (let i = 0; i <= maxVotes; i++) {
+    ticks.push(i);
+  }
 
   const roundIndices = Object.keys(roundsData)
     .map(Number)
@@ -152,7 +159,7 @@ const BallotResult: React.FC = () => {
                 margin={{ top: 20, right: 30, left: 100, bottom: 5 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" />
+                <XAxis type="number" ticks={ticks} />
                 <YAxis type="category" dataKey="name" width={80} />
                 <Tooltip />
                 <Legend />

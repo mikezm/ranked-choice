@@ -63,6 +63,7 @@ const BallotDetail: React.FC = () => {
               {ballot.choices.map((choice, index) => (
                 <div
                   key={`${choice.id}-${index}`}
+                  data-testid={`choice-${choice.id}`}
                   className={`choice-item ${selectedChoiceId === choice.id ? 'selected' : ''}`}
                   onClick={() => {
                     if (choice.id) {

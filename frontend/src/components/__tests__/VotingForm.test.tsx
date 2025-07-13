@@ -105,7 +105,7 @@ describe('VotingForm', () => {
       expect(screen.getByText('Choice 2')).toBeInTheDocument();
     });
 
-    const downButtons = screen.getAllByText('↓');
+    const downButtons = screen.getAllByTestId('down-btn');
     fireEvent.click(downButtons[0]);
 
     const rankElements = screen.getAllByText(/\d+\./);

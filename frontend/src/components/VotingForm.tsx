@@ -150,6 +150,7 @@ const VotingForm: React.FC<VotingFormProps> = ({ ballot, selectedChoiceId, onCho
                       type="button"
                       onClick={() => moveChoice(index, 'up')}
                       disabled={index === 0}
+                      data-testid="up-btn"
                     >
                       <FontAwesomeIcon icon={faUpLong} />
                     </button>
@@ -157,6 +158,7 @@ const VotingForm: React.FC<VotingFormProps> = ({ ballot, selectedChoiceId, onCho
                       type="button"
                       onClick={() => moveChoice(index, 'down')}
                       disabled={index === selectedChoices.length - 1}
+                      data-testid="down-btn"
                     >
                       <FontAwesomeIcon icon={faDownLong} />
                     </button>
