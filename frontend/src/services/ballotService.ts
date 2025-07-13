@@ -26,6 +26,18 @@ export interface Ballot {
   choices: Choice[];
 }
 
+export interface Round {
+  name: string;
+  votes: number;
+  round_index: number;
+}
+export interface BallotResult {
+  winner_id: number;
+  winner_name: string;
+  title: string;
+  rounds: Round[];
+}
+
 export const createBallot = async (ballotData: CreateBallotRequest): Promise<string> => {
   try {
     const response = await axios.post<CreateBallotResponse>(`${API_URL}/api/ballots/`, ballotData);
@@ -52,6 +64,16 @@ export const listBallots = async (): Promise<Ballot[]> => {
     return response.data;
   } catch (error) {
     console.error('Error listing ballots:', error);
+    throw error;
+  }
+};
+
+export const getBallotResults = async (slug: string): Promise<BallotResult> => {
+  try {
+    const response = await axios.get<BallotResult>(`${API_URL}/api/ballots/results/${slug}/`);
+    return response.data;
+  } catch (error) {
+    console.error('Error getting ballot results:', error);
     throw error;
   }
 };
