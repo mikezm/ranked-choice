@@ -1,10 +1,12 @@
 # Ranked Choice Voting Application
+#### Video Demo: https://www.youtube.com/watch?v=b-oapnCuKEo
+#### Description:
 
 A web application for conducting and managing ranked choice voting polls, built with Python (Django), and React TypeScript.
 Persistence is run with PostGreSQL and the app is run in Docker Containers. Four GitHub actions are included that run lint
 and test checks for both code bases. 
 
-Create a ballot, collect votes, and display results. Results of ballots highlight the rounds calculated when tallying votes. 
+Create a ballot, collect votes, and display results. Results of ballots highlight the rounds calculated when tallying votes.
 
 ## Project Structure
 
