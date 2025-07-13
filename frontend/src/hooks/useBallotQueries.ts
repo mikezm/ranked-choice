@@ -38,8 +38,8 @@ export const useListBallots = () => {
   });
 };
 
-export const useGetBallotResults = (slug: string) => {
-  return useQuery(ballotKeys.results(slug), () => getBallotResults(slug), {
+export const useGetBallotResults = (slug: string | undefined) => {
+  return useQuery(ballotKeys.results(slug || ''), () => getBallotResults(slug || ''), {
     staleTime: 5 * 60 * 1000,
   });
 };
