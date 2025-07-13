@@ -3,7 +3,7 @@ import { useCreateVoter } from '../hooks/useVoterMutations';
 import { Ballot } from '../services/ballotService';
 import { Vote } from '../services/voterService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faX } from '@fortawesome/free-solid-svg-icons';
+import { faUpLong, faDownLong, faX } from '@fortawesome/free-solid-svg-icons';
 
 interface VotingFormProps {
   ballot: Ballot;
@@ -151,14 +151,14 @@ const VotingForm: React.FC<VotingFormProps> = ({ ballot, selectedChoiceId, onCho
                       onClick={() => moveChoice(index, 'up')}
                       disabled={index === 0}
                     >
-                      ↑
+                      <FontAwesomeIcon icon={faUpLong} />
                     </button>
                     <button
                       type="button"
                       onClick={() => moveChoice(index, 'down')}
                       disabled={index === selectedChoices.length - 1}
                     >
-                      ↓
+                      <FontAwesomeIcon icon={faDownLong} />
                     </button>
                     <button
                       type="button"
