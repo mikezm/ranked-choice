@@ -119,6 +119,7 @@ const BallotResult: React.FC = () => {
         >
           <button
             onClick={goToPreviousRound}
+            data-testid="previous-round-btn"
             disabled={roundIndices.indexOf(currentRoundIndex) === 0}
             style={{
               padding: '8px 16px',
@@ -134,6 +135,7 @@ const BallotResult: React.FC = () => {
           </h3>
           <button
             onClick={goToNextRound}
+            data-testid="next-round-btn"
             disabled={roundIndices.indexOf(currentRoundIndex) === roundIndices.length - 1}
             style={{
               padding: '8px 16px',

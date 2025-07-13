@@ -1,4 +1,3 @@
-// Mock the useBallotQueries hook
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -8,7 +7,6 @@ import { useGetBallot } from '../../hooks/useBallotQueries';
 
 jest.mock('../../hooks/useBallotQueries');
 
-// Mock the VotingForm component
 jest.mock('../../components/VotingForm', () => {
   return {
     __esModule: true,
