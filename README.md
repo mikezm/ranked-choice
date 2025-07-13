@@ -1,6 +1,9 @@
 # Ranked Choice Voting Application
 
-A web application for conducting and managing ranked choice voting polls, built with Django and React TypeScript.
+A web application for conducting and managing ranked choice voting polls, built with Python Django and React TypeScript.
+Persistence is run with PostGreSQL and the app is run in Docker Containers. 
+
+Create a ballot, collect votes, and display results. Results of ballots highlight the rounds calculate when tallying votes. 
 
 ## Project Structure
 
@@ -10,10 +13,9 @@ ranked-choice/
 │   ├── ranked_choice/     # Django project
 │   │   ├── api/           # API endpoints
 │   │   ├── core/          # Core functionality
+│   │   ├── tests/         # integration & unit tests
 │   │   ├── settings.py    # Django settings
 │   │   └── ...
-│   ├── templates/         # Django templates
-│   ├── static/            # Static files
 │   ├── requirements.txt   # Python dependencies
 │   └── Dockerfile         # Backend Dockerfile
 ├── frontend/              # React TypeScript frontend
@@ -21,6 +23,7 @@ ranked-choice/
 │   │   ├── components/    # Reusable components
 │   │   ├── pages/         # Page components
 │   │   └── services/      # API services
+│   │   └── styles/        # css styles
 │   ├── public/            # Static assets
 │   ├── package.json       # Node.js dependencies
 │   └── Dockerfile         # Frontend Dockerfile
@@ -48,7 +51,7 @@ ranked-choice/
 
 3. Start the application with Docker Compose:
    ```bash
-   docker compose up -d
+   make build && make start
    ```
 
 4. Access the application:
@@ -83,6 +86,24 @@ make lint
 To automatically fix linting issues:
 ```bash
 make lint-fix
+```
+
+For frontend TypeScript files we use ESLint
+
+To automatically fix (most) linting issues:
+```bash
+make lint-ui
+```
+
+### Testing
+For backend tests run:
+```bash
+make test
+```
+
+For frontend tests run:
+```bash
+make test-ui
 ```
 
 The project also includes a GitHub Actions workflow that automatically runs the linter on all pull requests and pushes to the main branch.
